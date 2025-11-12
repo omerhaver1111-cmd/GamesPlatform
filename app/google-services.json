@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "467064495841",
+    "project_id": "gamesplatform-d9005",
+    "storage_bucket": "gamesplatform-d9005.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:467064495841:android:6daf7d2bfffee92de6e1a0",
+        "android_client_info": {
+          "package_name": "com.example.gamesplatform"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDRhrc6uvieSniwIAb7R7yPfCF2JHbvo6Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
