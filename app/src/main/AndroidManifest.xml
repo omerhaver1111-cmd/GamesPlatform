@@ -12,13 +12,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GamesPlatform">
         <activity
-            android:name=".screens.LoginActivity2"
+            android:name=".screens.MainActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.HomePageActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".screens.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".screens.MainActivity"
+            android:name=".screens.LandingActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

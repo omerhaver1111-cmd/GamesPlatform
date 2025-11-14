@@ -13,8 +13,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
 
-public class MainActivity extends AppCompatActivity {
-
+public class LandingActivity extends AppCompatActivity {
 
     Button toReg;
     Button toLog;
@@ -22,7 +21,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_landing);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -35,14 +34,14 @@ public class MainActivity extends AppCompatActivity {
         toReg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
+                Intent intent = new Intent(LandingActivity.this, RegisterActivity.class);
                 startActivity(intent);
             }
         });
         toLog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+                Intent intent = new Intent(LandingActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
