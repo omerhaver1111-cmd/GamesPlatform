@@ -12,12 +12,11 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
+import com.example.gamesplatform.models.User;
+import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
 public class MainActivity extends AppCompatActivity {
-
-
-    Button toReg;
-    Button toLog;
+    Button btn_logout;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,22 +28,17 @@ public class MainActivity extends AppCompatActivity {
             return insets;
         });
 
-        toReg = findViewById(R.id.btn_landing_go_to_register);
-        toLog = findViewById(R.id.btn_landing_go_to_login);
+        btn_logout = findViewById(R.id.btn_main_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferencesUtil.signOutUser(MainActivity.this);
+                Intent intent = new Intent(MainActivity.this, LandingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
 
-        toReg.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                startActivity(intent);
             }
         });
-        toLog.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(intent);
-            }
-        });
+
     }
 }

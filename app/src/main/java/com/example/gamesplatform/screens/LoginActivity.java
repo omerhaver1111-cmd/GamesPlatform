@@ -2,8 +2,11 @@ package com.example.gamesplatform.screens;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -12,10 +15,19 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
+import com.example.gamesplatform.models.User;
+import com.example.gamesplatform.services.DatabaseService;
+import com.example.gamesplatform.utils.SharedPreferencesUtil;
+import com.example.gamesplatform.utils.Validator;
+import com.google.android.material.textfield.TextInputLayout;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity implements View.OnClickListener{
+    private static final String TAG = "LoginActivity";
 
-    Button toLanding;
+    private TextInputLayout etEmail, etPassword;
+    private Button btnLogin;
+    private TextView tvRegister;
+    Button btnRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,12 +38,106 @@ public class LoginActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        toLanding = findViewById(R.id.btn_login_go_to_landing);
-        toLanding.setOnClickListener(new View.OnClickListener() {
+
+
+        /// get the views
+        etEmail = findViewById(R.id.et_login_email);
+        etPassword = findViewById(R.id.et_login_password);
+        btnLogin = findViewById(R.id.btn_login_login);
+        btnRegister = findViewById(R.id.btn_login_to_register);
+
+        btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(LoginActivity.this, LandingActivity.class);
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
                 startActivity(intent);
+            }
+
+        });
+        /// set the click listener
+        btnLogin.setOnClickListener(this);
+
+    }
+    public void onClick(View v) {
+        if (v.getId() == btnLogin.getId()) {
+            Log.d(TAG, "onClick: Login button clicked");
+
+            /// get the email and password entered by the user
+            String email = etEmail.getEditText().getText().toString();
+            String password = etPassword.getEditText().getText().toString();
+
+            /// log the email and password
+            Log.d(TAG, "onClick: Email: " + email);
+            Log.d(TAG, "onClick: Password: " + password);
+            Log.d(TAG, "onClick: Validating input...");
+            /// Validate input
+            if (!checkInput(email, password)) {
+                /// stop if input is invalid
+                return;
+            }
+
+            Log.d(TAG, "onClick: Logging in user...");
+
+            /// Login user
+            loginUser(email, password);
+        } else if (v.getId() == tvRegister.getId()) {
+            /// Navigate to Register Activity
+            Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
+            startActivity(registerIntent);
+        }
+    }
+
+    /// Method to check if the input is valid
+    /// It checks if the email and password are valid
+    /// @see Validator#isEmailValid(String)
+    /// @see Validator#isPasswordValid(String)
+    private boolean checkInput(String email, String password) {
+        if (!Validator.isEmailValid(email)) {
+            Log.e(TAG, "checkInput: Invalid email address");
+            /// show error message to user
+            etEmail.setError("Invalid email address");
+            /// set focus to email field
+            etEmail.requestFocus();
+            return false;
+        }
+
+        if (!Validator.isPasswordValid(password)) {
+            Log.e(TAG, "checkInput: Invalid password");
+            /// show error message to user
+            etPassword.setError("Password must be at least 6 characters long");
+            /// set focus to password field
+            etPassword.requestFocus();
+            return false;
+        }
+
+        return true;
+    }
+
+    private void loginUser(String email, String password) {
+        databaseService.getUserByEmailAndPassword(email, password, new DatabaseService.DatabaseCallback<User>() {
+            /// Callback method called when the operation is completed
+            /// @param user the user object that is logged in
+            @Override
+            public void onCompleted(User user) {
+                Log.d(TAG, "onCompleted: User logged in: " + user.toString());
+                /// save the user data to shared preferences
+                SharedPreferencesUtil.saveUser(LoginActivity.this, user);
+                /// Redirect to main activity and clear back stack to prevent user from going back to login screen
+                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                /// Clear the back stack (clear history) and start the MainActivity
+                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(mainIntent);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Log.e(TAG, "onFailed: Failed to retrieve user data", e);
+                /// Show error message to user
+                etPassword.setError("Invalid email or password");
+                etPassword.requestFocus();
+                /// Sign out the user if failed to retrieve user data
+                /// This is to prevent the user from being logged in again
+                SharedPreferencesUtil.signOutUser(LoginActivity.this);
             }
         });
     }

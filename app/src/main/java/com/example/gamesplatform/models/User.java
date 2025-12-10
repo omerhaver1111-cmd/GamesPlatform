@@ -1,22 +1,30 @@
 package com.example.gamesplatform.models;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable {
     public String id;
     public String username;
+    public String nickname;
     public String email;
     public String password;
     public boolean isAdmin;
     public int money;
     public int exp;
 
-    public User(String id, String username, String email, String password, boolean isAdmin, int money, int exp) {
+    public User() {
+
+    }
+
+    public User(String id, String username, String nickname, String email, String password, boolean isAdmin) {
         this.id = id;
         this.username = username;
+        this.nickname = nickname;
         this.email = email;
         this.password = password;
         this.isAdmin = isAdmin;
-        this.money = money;
-        this.exp = exp;
+        this.money = 100;
+        this.exp = 0;
     }
 
     public String getId() {
@@ -33,6 +41,14 @@ public class User {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String username) {
+        this.nickname = nickname;
     }
 
     public String getEmail() {
@@ -88,9 +104,7 @@ public class User {
                 '}';
     }
 
-    public User() {
 
-    }
 
 
 }

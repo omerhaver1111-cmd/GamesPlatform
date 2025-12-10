@@ -12,10 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GamesPlatform">
         <activity
-            android:name=".screens.MainActivity"
+            android:name=".screens.PlayerInfoActivity"
             android:exported="false" />
         <activity
-            android:name=".screens.HomePageActivity"
+            android:name=".screens.MainActivity"
             android:exported="false" />
         <activity
             android:name=".screens.LoginActivity"
