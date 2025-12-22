@@ -24,7 +24,7 @@ import com.example.gamesplatform.utils.Validator;
 public class PlayerInfoActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "PlayerInfoActivity";
-    private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPhone, etUserPassword;
+    private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPassword;
     private TextView tvUserDisplayEmail,btn_to_player_info, tv_username,tv_nick_name,tv_level,tv_money;
     private Button btnUpdateProfile;
     String selectedUid;
@@ -183,7 +183,6 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         Log.d(TAG, "Is current user: " + isCurrentUser);
         Log.d(TAG, "User email: " + selectedUser.getEmail());
         Log.d(TAG, "User password: " + selectedUser.getPassword());
-
 
 
         if (!isCurrentUser && !selectedUser.isAdmin()) {
