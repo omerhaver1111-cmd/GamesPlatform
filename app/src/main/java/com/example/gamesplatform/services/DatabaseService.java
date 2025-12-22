@@ -60,7 +60,7 @@ public class DatabaseService {
 
     /// use getInstance() to get an instance of this class
     /// @see DatabaseService#getInstance()
-    private DatabaseService() {
+    public DatabaseService() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance("https://gamesplatform-d9005-default-rtdb.europe-west1.firebasedatabase.app/");
         databaseReference = firebaseDatabase.getReference();
     }

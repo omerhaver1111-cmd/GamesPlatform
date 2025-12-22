@@ -3,7 +3,6 @@ package com.example.gamesplatform.screens;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -25,7 +24,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
     private static final String TAG = "PlayerInfoActivity";
     private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPassword;
-    private TextView tvUserDisplayEmail,btn_to_player_info, tv_username,tv_nick_name,tv_level,tv_money;
+    private TextView tvUserDisplayEmail,btn_to_player_info,btn_to_main, tv_username,tv_nick_name,tv_level,tv_money;
     private Button btnUpdateProfile;
     String selectedUid;
     User selectedUser;
@@ -80,6 +79,14 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         btnUpdateProfile.setOnClickListener(this);
 
         showUserProfile();
+        btn_to_main = findViewById((R.id.btn_main_home));
+        btn_to_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PlayerInfoActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
         btn_to_player_info = findViewById(R.id.btn_main_info);
         btn_to_player_info.setOnClickListener(new View.OnClickListener() {
             @Override

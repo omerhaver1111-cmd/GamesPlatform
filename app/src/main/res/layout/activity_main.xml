@@ -110,6 +110,22 @@
         app:layout_constraintVertical_bias="0.597"
         tools:ignore="MissingConstraints" />
 
+    <TextView
+        android:id="@+id/tv_main_nick_name"
+        android:layout_width="386dp"
+        android:layout_height="58dp"
+        android:gravity="center"
+        android:text="GameOn"
+        android:textColor="#D4B2DE"
+        android:textSize="22sp"
+        app:layout_constraintBottom_toTopOf="@+id/imageView3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.48"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:ignore="MissingConstraints" />
+
     <Button
         android:id="@+id/btn_main_logout"
         android:layout_width="71dp"
