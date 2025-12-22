@@ -26,7 +26,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     private TextInputLayout etEmail, etPassword;
     private Button btnLogin;
-    private TextView tvRegister;
     Button btnRegister;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +62,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             Log.d(TAG, "onClick: Login button clicked");
 
             /// get the email and password entered by the user
-            String email = etEmail.getEditText().getText().toString();
-            String password = etPassword.getEditText().getText().toString();
+            String email = etEmail.getEditText().getText().toString().trim();
+            String password = etPassword.getEditText().getText().toString().trim();
 
             /// log the email and password
             Log.d(TAG, "onClick: Email: " + email);
@@ -80,10 +79,6 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
             /// Login user
             loginUser(email, password);
-        } else if (v.getId() == tvRegister.getId()) {
-            /// Navigate to Register Activity
-            Intent registerIntent = new Intent(LoginActivity.this, RegisterActivity.class);
-            startActivity(registerIntent);
         }
     }
 

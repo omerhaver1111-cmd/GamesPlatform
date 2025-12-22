@@ -25,9 +25,8 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
     private static final String TAG = "PlayerInfoActivity";
     private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPhone, etUserPassword;
-    private TextView tvUserDisplayName, tvUserDisplayEmail;
-    private Button btnUpdateProfile, btn_logout;
-    private View adminBadge;
+    private TextView tvUserDisplayEmail,btn_to_player_info, tv_username,tv_nick_name,tv_level,tv_money;
+    private Button btnUpdateProfile;
     String selectedUid;
     User selectedUser;
     boolean isCurrentUser = false;
@@ -36,8 +35,8 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_player_info);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        setContentView(R.layout.player_profile);
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.player_profile), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
@@ -60,45 +59,60 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             return;
         }
 
-        btn_logout = findViewById(R.id.btn_logout_playerinfo);
-        btn_logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
-                Intent intent = new Intent(PlayerInfoActivity.this, LandingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+        tv_username = findViewById(R.id.tv_user_display_username);
+        tv_nick_name = findViewById(R.id.tv_user_display_nikname);
+        tv_level = findViewById(R.id.tv_user_display_level);
+        tv_money = findViewById(R.id.tv_user_display_cash);
+        set_tv(tv_username, tv_nick_name, tv_level, tv_money);
 
-            }
-        });
 
         Log.d(TAG, "Selected user: " + selectedUid);
 
         // Initialize the EditText fields
-//        etUserFirstName = findViewById(R.id.et_user_first_name);
-//        etUserLastName = findViewById(R.id.et_user_last_name);
-//        etUserEmail = findViewById(R.id.et_user_email);
-//        etUserPhone = findViewById(R.id.et_user_phone);
-//        etUserPassword = findViewById(R.id.et_user_password);
-//        tvUserDisplayName = findViewById(R.id.tv_user_display_name);
-//        tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
-//        btnUpdateProfile = findViewById(R.id.btn_edit_profile);
-//        adminBadge = findViewById(R.id.admin_badge);
+        etUserFirstName = findViewById(R.id.et_user_first_name);
+        etUserLastName = findViewById(R.id.et_user_nick_name);
+        etUserEmail = findViewById(R.id.et_user_email);
+        etUserPassword = findViewById(R.id.et_user_password);
+        tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
+        btnUpdateProfile = findViewById(R.id.btn_edit_profile);
+//       adminBadge = findViewById(R.id.admin_badge);
 
         btnUpdateProfile.setOnClickListener(this);
-        btn_logout.setOnClickListener(this);
-
-        // if the user is not the current user, hide the sign out button
-        if (!isCurrentUser) {
-            btn_logout.setVisibility(View.GONE);
-        }
 
         showUserProfile();
+        btn_to_player_info = findViewById(R.id.btn_main_info);
+        btn_to_player_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
+                Intent intent = new Intent(PlayerInfoActivity.this, PlayerInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    private void set_tv(TextView tvUsername, TextView tvNickname, TextView tvLevel, TextView tvMoney) {
+        // Get the user data from database
+        databaseService.getUser(selectedUid, new DatabaseService.DatabaseCallback<User>() {
+            @Override
+            public void onCompleted(User user) {
+                selectedUser = user;
+                // Set the user data to the EditText fields
+                tvUsername.setText(user.getUsername());
+                tvNickname.setText(user.getNickname());
+                tvLevel.setText(String.valueOf(user.getExp()));
+                tvMoney.setText(String.valueOf(user.getMoney()));
+            }
+            @Override
+            public void onFailed(Exception e) {
+                Log.e(TAG, "Error getting user profile", e);
+            }
+        });
     }
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.btn_edit_profile_playerinfo) {
+        if(v.getId() == R.id.btn_edit_profile) {
             updateUserProfile();
             return;
         }
@@ -121,17 +135,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
                 // Update display fields
                 String displayName = user.getUsername() + "|" + user.getNickname();
-                tvUserDisplayName.setText(displayName);
                 tvUserDisplayEmail.setText(user.getEmail());
-
-                // Show/hide admin badge based on user's admin status
-                if (user.isAdmin()) {
-                    adminBadge.setVisibility(View.VISIBLE);
-                    Log.d(TAG, "User is admin, showing admin badge");
-                } else {
-                    adminBadge.setVisibility(View.GONE);
-                    Log.d(TAG, "User is not admin, hiding admin badge");
-                }
             }
 
             @Override
@@ -160,15 +164,13 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         // Get the updated user data from the EditText fields
         String firstName = etUserFirstName.getText().toString();
         String lastName = etUserLastName.getText().toString();
-        String phone = etUserPhone.getText().toString();
         String email = etUserEmail.getText().toString();
         String password = etUserPassword.getText().toString();
 
-        if (!isValid(firstName, lastName, phone, email, password)) {
+        if (!isValid(firstName, lastName, email, password)) {
             Log.e(TAG, "Invalid input");
             return;
         }
-
         // Update the user object
         selectedUser.setUsername(firstName);
         selectedUser.setNickname(lastName);
@@ -216,7 +218,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         });
     }
 
-    private boolean isValid(String firstName, String lastName, String phone, String email, String password) {
+    private boolean isValid(String firstName, String lastName, String email, String password) {
         if (!Validator.isNameValid(firstName)) {
             etUserFirstName.setError("First name is required");
             etUserFirstName.requestFocus();
