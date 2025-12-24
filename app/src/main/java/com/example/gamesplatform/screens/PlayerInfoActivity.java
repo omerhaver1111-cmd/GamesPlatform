@@ -50,7 +50,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             selectedUid = currentUser.getId();
         }
         isCurrentUser = selectedUid.equals(currentUser.getId());
-        if (!currentUser.isAdmin()) {
+        if (!isCurrentUser && !currentUser.isAdmin()) {
             // If the user is not an admin and the selected user is not the current user
             // then finish the activity
             Toast.makeText(this, "You are not authorized to view this profile", Toast.LENGTH_SHORT).show();
