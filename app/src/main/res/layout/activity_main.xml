@@ -41,7 +41,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
+         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
         android:id="@+id/btn_main_shop"
@@ -115,7 +115,7 @@
         android:layout_width="386dp"
         android:layout_height="58dp"
         android:gravity="center"
-        android:text="GameOn"
+        android:text="GameOn - name"
         android:textColor="#D4B2DE"
         android:textSize="22sp"
         app:layout_constraintBottom_toTopOf="@+id/imageView3"

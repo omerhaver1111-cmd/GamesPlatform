@@ -1,6 +1,8 @@
 package com.example.gamesplatform.models;
 
-public class Coin {
+import java.io.Serializable;
+
+public class Coin implements Serializable {
     public String imgPath;
     public int value;
     public double minHeight;

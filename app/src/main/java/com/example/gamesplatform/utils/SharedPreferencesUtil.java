@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 
 import androidx.annotation.Nullable;
 
+import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.google.gson.Gson;
 
@@ -123,6 +124,10 @@ public class SharedPreferencesUtil {
         saveObject(context, "user", user);
     }
 
+    public static void saveGroup(Context context, Group group) {
+        saveObject(context, "group", group);
+    }
+
     /// Get the user object from shared preferences
     /// @param context The context to use
     /// @return The user object stored in shared preferences
@@ -134,11 +139,20 @@ public class SharedPreferencesUtil {
         }
         return getObject(context, "user", User.class);
     }
+    public static Group getGroup(Context context) {
+        if (!isUserLoggedIn(context)) {
+            return null;
+        }
+        return getObject(context, "group", Group.class);
+    }
 
     /// Sign out the user by removing user data from shared preferences
     /// @param context The context to use
     public static void signOutUser(Context context) {
         remove(context, "user");
+    }
+    public static void leaveGroup(Context context) {
+        remove(context, "group");
     }
 
     /// Check if a user is logged in by checking if the user id is present in shared preferences

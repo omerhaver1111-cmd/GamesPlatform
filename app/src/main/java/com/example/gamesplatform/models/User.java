@@ -8,6 +8,7 @@ public class User implements Serializable {
     public String nickname;
     public String email;
     public String password;
+    public boolean inGroup;
     public boolean isAdmin;
     public int money;
     public int exp;
@@ -22,6 +23,7 @@ public class User implements Serializable {
         this.nickname = nickname;
         this.email = email;
         this.password = password;
+        this.inGroup = false;
         this.isAdmin = isAdmin;
         this.money = 100;
         this.exp = 0;
@@ -65,6 +67,14 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean getInGroup(){
+        return  this.inGroup;
+    }
+
+    public void setInGroup(boolean ing){
+        this.inGroup = ing;
     }
 
     public boolean isAdmin() {

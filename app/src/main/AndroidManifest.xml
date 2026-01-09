@@ -12,6 +12,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GamesPlatform">
         <activity
+            android:name=".screens.GroupsActivity"
+            android:exported="false" />
+        <activity
             android:name=".screens.PlayerInfoActivity"
             android:exported="false" />
         <activity

@@ -24,8 +24,8 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
     private static final String TAG = "PlayerInfoActivity";
     private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPassword;
-    private TextView tvUserDisplayEmail,btn_to_player_info,btn_to_main, tv_username,tv_nick_name,tv_level,tv_money;
-    private Button btnUpdateProfile;
+    private TextView tvUserDisplayEmail, btn_to_player_info,btn_to_group, btn_to_main, tv_username,tv_nick_name,tv_level,tv_money;
+    private Button btnUpdateProfile, btn_logout, btn_to_admin_page;
     String selectedUid;
     User selectedUser;
     boolean isCurrentUser = false;
@@ -58,11 +58,19 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             return;
         }
 
+
         tv_username = findViewById(R.id.tv_user_display_username);
         tv_nick_name = findViewById(R.id.tv_user_display_nikname);
         tv_level = findViewById(R.id.tv_user_display_level);
         tv_money = findViewById(R.id.tv_user_display_cash);
         set_tv(tv_username, tv_nick_name, tv_level, tv_money);
+
+        btn_to_admin_page = findViewById(R.id.btn_player_profile_to_admin_page);
+        if(currentUser.isAdmin){
+            btn_to_admin_page.setVisibility(View.VISIBLE);
+        } else {
+            btn_to_admin_page.setVisibility(View.GONE);
+        }
 
 
         Log.d(TAG, "Selected user: " + selectedUid);
@@ -73,9 +81,9 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         etUserEmail = findViewById(R.id.et_user_email);
         etUserPassword = findViewById(R.id.et_user_password);
         tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
-        btnUpdateProfile = findViewById(R.id.btn_edit_profile);
 //       adminBadge = findViewById(R.id.admin_badge);
 
+        btnUpdateProfile = findViewById(R.id.btn_edit_profile);
         btnUpdateProfile.setOnClickListener(this);
 
         showUserProfile();
@@ -93,6 +101,15 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             public void onClick(View view) {
                 SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
                 Intent intent = new Intent(PlayerInfoActivity.this, PlayerInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_to_group = findViewById(R.id.btn_main_group2);
+        btn_to_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlayerInfoActivity.this, GroupsActivity.class);
                 startActivity(intent);
             }
         });
@@ -123,7 +140,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             updateUserProfile();
             return;
         }
-        if(v.getId() == R.id.btn_logout_playerinfo) {
+        if(v.getId() == R.id.btn_player_profile_logout) {
             signOut();
         }
     }

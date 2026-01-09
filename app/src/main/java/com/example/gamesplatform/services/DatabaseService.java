@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -33,8 +34,9 @@ public class DatabaseService {
 
     /// paths for different data types in the database
     /// @see DatabaseService#readData(String)
-    private static final String USERS_PATH = "users",
-            FOODS_PATH = "foods",
+    private static final String
+            USERS_PATH = "users",
+            GROUP_PATH = "groups",
             CARTS_PATH = "carts";
 
     /// callback interface for database operations
@@ -225,6 +227,14 @@ public class DatabaseService {
         return generateNewId(USERS_PATH);
     }
 
+    /// generate a new id for a new user in the database
+    /// @return a new id for the user
+    /// @see #generateNewId(String)
+    /// @see Group
+    public String generateGroupId() {
+        return generateNewId(GROUP_PATH);
+    }
+
     /// create a new user in the database
     /// @param user the user object to create
     /// @param callback the callback to call when the operation is completed
@@ -234,6 +244,17 @@ public class DatabaseService {
     /// @see User
     public void createNewUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
         writeData(USERS_PATH + "/" + user.getId(), user, callback);
+    }
+
+    /// create a new user in the database
+    /// @param group the user object to create
+    /// @param callback the callback to call when the operation is completed
+    ///              the callback will receive void
+    ///            if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see Group
+    public void createNewGroup(@NotNull final Group group, @Nullable final DatabaseCallback<Void> callback) {
+        writeData(GROUP_PATH + "/" + group.getGroupId(), group, callback);
     }
 
     /// get a user from the database
@@ -247,6 +268,17 @@ public class DatabaseService {
         getData(USERS_PATH + "/" + uid, User.class, callback);
     }
 
+    /// get a user from the database
+    /// @param uid the id of the user to get
+    /// @param callback the callback to call when the operation is completed
+    ///               the callback will receive the user object
+    ///             if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see Group
+    public void getGroup(@NotNull final String uid, @NotNull final DatabaseCallback<User> callback) {
+        getData(GROUP_PATH + "/" + uid, User.class, callback);
+    }
+
     /// get all the users from the database
     /// @param callback the callback to call when the operation is completed
     ///              the callback will receive a list of user objects
@@ -258,11 +290,29 @@ public class DatabaseService {
         getDataList(USERS_PATH, User.class, callback);
     }
 
+    /// get all the users from the database
+    /// @param callback the callback to call when the operation is completed
+    ///              the callback will receive a list of user objects
+    ///            if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see List
+    /// @see Group
+    public void getGroupList(@NotNull final DatabaseCallback<List<Group>> callback) {
+        getDataList(GROUP_PATH, Group.class, callback);
+    }
+
     /// delete a user from the database
     /// @param uid the user id to delete
     /// @param callback the callback to call when the operation is completed
     public void deleteUser(@NotNull final String uid, @Nullable final DatabaseCallback<Void> callback) {
         deleteData(USERS_PATH + "/" + uid, callback);
+    }
+
+    /// delete a user from the database
+    /// @param gid the user id to delete
+    /// @param callback the callback to call when the operation is completed
+    public void deleteGroup(@NotNull final String gid, @Nullable final DatabaseCallback<Void> callback) {
+        deleteData(GROUP_PATH + "/" + gid, callback);
     }
 
     /// get a user by email and password
@@ -293,6 +343,33 @@ public class DatabaseService {
         });
     }
 
+    /// get a user by email and password
+    /// @param group_name the name of the group
+    /// @param callback the callback to call when the operation is completed
+    ///            the callback will receive the user object
+    ///          if the operation fails, the callback will receive an exception
+    /// @see DatabaseCallback
+    /// @see Group
+    public void getUserByGroupName(@NotNull final String group_name, @NotNull final DatabaseCallback<Group> callback) {
+        getGroupList(new DatabaseCallback<List<Group>>() {
+            @Override
+            public void onCompleted(List<Group> groups) {
+                for (Group group : groups) {
+                    if (Objects.equals(group.getGroupName(), group_name)) {
+                        callback.onCompleted(group);
+                        return;
+                    }
+                }
+                callback.onCompleted(null);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
+    }
+
     /// check if an email already exists in the database
     /// @param email the email to check
     /// @param callback the callback to call when the operation is completed
@@ -302,6 +379,28 @@ public class DatabaseService {
             public void onCompleted(List<User> users) {
                 for (User user : users) {
                     if (Objects.equals(user.getEmail(), email)) {
+                        callback.onCompleted(true);
+                        return;
+                    }
+                }
+                callback.onCompleted(false);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+
+            }
+        });
+    }
+    /// check if an email already exists in the database
+    /// @param groupName the name of the group
+    /// @param callback the callback to call when the operation is completed
+    public void checkIfGroupNameExists(@NotNull final String groupName, @NotNull final DatabaseCallback<Boolean> callback) {
+        getGroupList(new DatabaseCallback<List<Group>>() {
+            @Override
+            public void onCompleted(List<Group> groups) {
+                for (Group group : groups) {
+                    if (Objects.equals(group.getGroupName(), groupName)) {
                         callback.onCompleted(true);
                         return;
                     }

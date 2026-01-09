@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     Button btn_logout;
-    TextView btn_to_player_info, btn_to_main, tv_nick_name;
+    TextView btn_to_player_info, btn_to_main, btn_to_group, tv_nick_name;
     private DatabaseService databaseService;
 
     @Override
@@ -69,6 +69,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, PlayerInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_to_group = findViewById(R.id.btn_main_group);
+        btn_to_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
                 startActivity(intent);
             }
         });
