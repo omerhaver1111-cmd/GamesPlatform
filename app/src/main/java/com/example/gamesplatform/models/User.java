@@ -1,5 +1,7 @@
 package com.example.gamesplatform.models;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -113,6 +115,12 @@ public class User implements Serializable {
                 ", exp=" + exp +
                 '}';
     }
+
+
+//    @Exclude
+//    public boolean isInGroup() {
+//        return this.groupId != null && !this.groupId.isEmpty();
+//    }
 
 
 

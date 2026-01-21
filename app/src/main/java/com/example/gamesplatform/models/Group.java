@@ -1,8 +1,11 @@
 package com.example.gamesplatform.models;
 
+import com.google.firebase.database.Exclude;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 public class Group implements Serializable {
@@ -19,7 +22,7 @@ public class Group implements Serializable {
     public Group(String groupName,String leaderId) {
         this.leaderId = leaderId;
         this.groupName = groupName;
-        this.id = leaderId;
+        this.id = groupName;
         members = new HashMap<>();
         members.put(leaderId, true);
     }
@@ -42,5 +45,10 @@ public class Group implements Serializable {
 
     public boolean isMember(String userId) {
         return members.containsKey(userId);
+    }
+
+    @Exclude
+    public Set<String> getMembers() {
+        return this.members.keySet();
     }
 }

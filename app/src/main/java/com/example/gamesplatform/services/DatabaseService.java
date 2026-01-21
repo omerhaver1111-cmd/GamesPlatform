@@ -269,14 +269,14 @@ public class DatabaseService {
     }
 
     /// get a user from the database
-    /// @param uid the id of the user to get
+    /// @param id the id of the user to get
     /// @param callback the callback to call when the operation is completed
     ///               the callback will receive the user object
     ///             if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Group
-    public void getGroup(@NotNull final String uid, @NotNull final DatabaseCallback<User> callback) {
-        getData(GROUP_PATH + "/" + uid, User.class, callback);
+    public void getGroup(@NotNull final String id, @NotNull final DatabaseCallback<Group> callback) {
+        getData(GROUP_PATH + "/" + id, Group.class, callback);
     }
 
     /// get all the users from the database
@@ -392,28 +392,7 @@ public class DatabaseService {
             }
         });
     }
-    /// check if an email already exists in the database
-    /// @param groupName the name of the group
-    /// @param callback the callback to call when the operation is completed
-    public void checkIfGroupNameExists(@NotNull final String groupName, @NotNull final DatabaseCallback<Boolean> callback) {
-        getGroupList(new DatabaseCallback<List<Group>>() {
-            @Override
-            public void onCompleted(List<Group> groups) {
-                for (Group group : groups) {
-                    if (Objects.equals(group.getGroupName(), groupName)) {
-                        callback.onCompleted(true);
-                        return;
-                    }
-                }
-                callback.onCompleted(false);
-            }
 
-            @Override
-            public void onFailed(Exception e) {
-
-            }
-        });
-    }
 
     public void updateUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
         runTransaction(USERS_PATH + "/" + user.getId(), User.class, currentUser -> user, new DatabaseCallback<User>() {
