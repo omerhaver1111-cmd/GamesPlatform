@@ -11,7 +11,7 @@ import java.util.Set;
 public class Group implements Serializable {
     public String id;
     public String leaderId;
-    public String groupName;
+    public String groupName;    //שם  הקבוצה
     public Map<String, Boolean> members; // if group leader -> true
 
 
@@ -19,7 +19,7 @@ public class Group implements Serializable {
         members = new HashMap<>();
     }
 
-    public Group(String groupName,String leaderId) {
+    public Group(String groupName,String leaderId ) {
         this.leaderId = leaderId;
         this.groupName = groupName;
         this.id = groupName;
@@ -43,12 +43,51 @@ public class Group implements Serializable {
         return groupName;
     }
 
+    public String getLeaderId() {
+        return leaderId;
+    }
+
     public boolean isMember(String userId) {
-        return members.containsKey(userId);
+        return members != null && members.containsKey(userId);
     }
 
     @Exclude
     public Set<String> getMembers() {
         return this.members.keySet();
     }
+
+    public void promoteMember(String userId) {
+        if (members.containsKey(userId)) {
+            members.put(userId, true);
+        }
+    }
+
+    public void demoteMember(String userId) {
+        // חשוב לוודא שלא עושים demote ל-leader הראשי בטעות
+        if (members.containsKey(userId) && !userId.equals(leaderId)) {
+            members.put(userId, false);
+        }
+    }
+
+    public boolean isAdmin(String userId) {
+        return members != null && members.containsKey(userId) && Boolean.TRUE.equals(members.get(userId));
+    }
+
+    @Exclude
+    public int getMemberCount() {
+        return members != null ? members.size() : 0;
+    }
+
+    /**
+     * מחזירה רשימה של כל ה-IDs של המשתמשים בקבוצה
+     */
+    @Exclude // אנחנו לא רוצים שזה יישמר ב-Firebase
+    public Set<String> getUserIds() {
+        if (this.members == null) {
+            return new HashMap<String, Boolean>().keySet();
+        }
+        return this.members.keySet();
+    }
+
+
 }

@@ -3,6 +3,8 @@ package com.example.gamesplatform.models;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
 
 public class User implements Serializable {
     public String id;
@@ -16,7 +18,6 @@ public class User implements Serializable {
     public int exp;
 
     public User() {
-
     }
 
     public User(String id, String username, String nickname, String email, String password, boolean isAdmin) {
@@ -116,6 +117,17 @@ public class User implements Serializable {
                 '}';
     }
 
+    public Group getMyGroup(Map<String, Group> groupsMap) {
+        if (!inGroup || groupsMap == null || id == null) {
+            return null;
+        }
+        for (Group group : groupsMap.values()) {
+            if (group.getUserIds() != null && group.getUserIds().contains(id)) {
+                return group;
+            }
+        }
+        return null;
+    }
 
 //    @Exclude
 //    public boolean isInGroup() {

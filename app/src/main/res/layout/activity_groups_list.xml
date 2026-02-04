@@ -31,7 +31,8 @@
                 android:id="@+id/my_group_card"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                tools:visibility="gone">
 
                 <TextView
                     android:id="@+id/group_name"
@@ -54,8 +55,9 @@
                         android:layout_height="wrap_content"
                         android:clipToPadding="false"
                         android:nestedScrollingEnabled="false"
-                        tools:itemCount="4"
-                        tools:listitem="@layout/item_group" />
+                        tools:itemCount="3"
+                        tools:listitem="@layout/item_user" />
+
                 </ScrollView>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -186,7 +188,7 @@
             android:layout_height="match_parent">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_group_groups"
+                android:id="@+id/rv_users_admin_page"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clipToPadding="false"

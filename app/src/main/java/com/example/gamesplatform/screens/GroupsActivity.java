@@ -24,13 +24,16 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gamesplatform.adapters.GroupsAdapter;
+import com.example.gamesplatform.adapters.UsersAdapter;
 import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 
 public class GroupsActivity extends BaseActivity implements View.OnClickListener {
@@ -39,15 +42,17 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     // UI Components
     private RecyclerView rvGroups, rvUsers;
-    private GroupsAdapter adapter;
+    private GroupsAdapter group_adapter;
+    private UsersAdapter usersAdapter; // אדפטר ייעודי למשתמשים
     private TextView btn_to_player_info, btn_to_main;
     private EditText etGroupName, etGroupId;
     private Button btnCreateGroup, btnJoinGroup;
-    private LinearLayout createGwin;
 
     // Data
     private String currentUserId;
     private User currentUser;
+    // למעלה עם שאר המשתנים
+    private Map<String, Group> groupsMap = new HashMap<>(); // מפה לחיפוש מהיר של שמות קבוצות
     private List<Group> allGroups = new ArrayList<>();
 
     @Override
@@ -71,11 +76,23 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         }
         currentUserId = currentUser.getId();
 
+        LinearLayout createGwin, my_group;
 
-        // If the user is in a group he can't create a new one
         if (currentUser.getInGroup()){
+            // If the user is in a group he can't create a new one
             createGwin = findViewById(R.id.create_group_window);
             createGwin.setVisibility(View.GONE);
+
+            my_group = findViewById(R.id.my_group_card);
+            my_group.setVisibility(View.VISIBLE);
+        }
+        else{
+            createGwin = findViewById(R.id.create_group_window);
+            createGwin.setVisibility(View.VISIBLE);
+
+            my_group = findViewById(R.id.my_group_card);
+            my_group.setVisibility(View.GONE);
+
         }
 
         btn_to_main = findViewById((R.id.btn_group_home));
@@ -104,16 +121,12 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-
         // Initialize views
         initViews();
-
         // Setup RecyclerView
         setupRecyclerView();
-
         // Setup button listeners
         setupButtons();
-
         // Load groups
         loadUsers();
         loadGroups();
@@ -139,7 +152,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     private void initViews() {
         // RecyclerView components
-        rvGroups = findViewById(R.id.rv_group_groups);
+        rvGroups = findViewById(R.id.rv_users_admin_page);
         rvUsers = findViewById(R.id.rv_group_users);
 
         // Create group components
@@ -158,23 +171,28 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     private void setupRecyclerView() {
         rvGroups.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new GroupsAdapter(new GroupsAdapter.OnGroupListener() {
+        group_adapter = new GroupsAdapter(new GroupsAdapter.OnGroupListener() {
             @Override
             public void onClick(Group group) {
                 // Handle group click - open group details
                 Toast.makeText(GroupsActivity.this,
                         "Clicked: " + group.groupName,
                         Toast.LENGTH_SHORT).show();
-
-                // TODO: Navigate to group details
-                // Intent intent = new Intent(GroupsActivity.this, GroupDetailsActivity.class);
-                // intent.putExtra("GROUP_ID", group.groupId);
-                // startActivity(intent);
             }
-
         });
+        rvGroups.setAdapter(group_adapter);
 
-        rvGroups.setAdapter(adapter);
+//        rvUsers.setLayoutManager(new LinearLayoutManager(this));
+//        usersAdapter = new GroupsAdapter(new UsersAdapter.OnUserClickListener() {
+//            @Override
+//            public void onClick(User user) {
+//                // Handle group click - open group details
+//                Toast.makeText(GroupsActivity.this,
+//                        "Clicked: " + user.groupName,
+//                        Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//        rvUsers.setAdapter(usersAdapter);
     }
 
     private void loadUsers() {
@@ -182,7 +200,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onCompleted(List<User> users) {
                 Toast.makeText(GroupsActivity.this, "users: "+users.size(), Toast.LENGTH_LONG).show();
-                adapter.setUsers(users);
+                group_adapter.setUsers(users);
             }
 
             @Override
@@ -202,7 +220,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                 String groupName = etGroupId.getText().toString();
                 filterGroups(groupName);
             }
-
             @Override
             public void onFailed(Exception e)
             {
@@ -341,6 +358,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                 return !group.getGroupName().contains(text);
             }
         });
-        adapter.setGroups(filterGroups);
+        group_adapter.setGroups(filterGroups);
     }
+
+
 }

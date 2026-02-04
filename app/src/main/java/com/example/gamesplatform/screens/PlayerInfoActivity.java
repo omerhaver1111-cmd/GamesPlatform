@@ -113,6 +113,14 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 startActivity(intent);
             }
         });
+
+        btn_to_admin_page.setOnClickListener((new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(PlayerInfoActivity.this, AdminPageActivity.class);
+                startActivity(intent);
+            }
+        }));
     }
 
     private void set_tv(TextView tvUsername, TextView tvNickname, TextView tvLevel, TextView tvMoney) {
