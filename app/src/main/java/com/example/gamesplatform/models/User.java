@@ -12,10 +12,13 @@ public class User implements Serializable {
     public String nickname;
     public String email;
     public String password;
+
     public boolean inGroup;
     public boolean isAdmin;
+
     public int money;
     public int exp;
+    public int carGameRecord;
 
     public User() {
     }
@@ -30,6 +33,9 @@ public class User implements Serializable {
         this.isAdmin = isAdmin;
         this.money = 100;
         this.exp = 0;
+        this.carGameRecord = 0;
+
+
     }
 
     public String getId() {
@@ -100,8 +106,34 @@ public class User implements Serializable {
         return exp;
     }
 
+    public int getCarGameRecord() {
+        return carGameRecord;
+    }
+
+    public void setCarGameRecord(int carGameRecord) {
+        this.carGameRecord = carGameRecord;
+    }
+
+
     public void setExp(int exp) {
         this.exp = exp;
+    }
+
+    @Exclude
+    public boolean isInGroup() {
+        return inGroup;
+    }
+
+    public Group getMyGroup(Map<String, Group> groupsMap) {
+        if (!inGroup || groupsMap == null || id == null) {
+            return null;
+        }
+        for (Group group : groupsMap.values()) {
+            if (group.getUserIds() != null && group.getUserIds().contains(id)) {
+                return group;
+            }
+        }
+        return null;
     }
 
     @Override
@@ -117,22 +149,7 @@ public class User implements Serializable {
                 '}';
     }
 
-    public Group getMyGroup(Map<String, Group> groupsMap) {
-        if (!inGroup || groupsMap == null || id == null) {
-            return null;
-        }
-        for (Group group : groupsMap.values()) {
-            if (group.getUserIds() != null && group.getUserIds().contains(id)) {
-                return group;
-            }
-        }
-        return null;
-    }
 
-//    @Exclude
-//    public boolean isInGroup() {
-//        return this.groupId != null && !this.groupId.isEmpty();
-//    }
 
 
 

@@ -17,7 +17,9 @@ import com.google.firebase.database.Transaction;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.function.UnaryOperator;
 
@@ -63,7 +65,8 @@ public class DatabaseService {
     /// use getInstance() to get an instance of this class
     /// @see DatabaseService#getInstance()
     public DatabaseService() {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance("https://gamesplatform-d9005-default-rtdb.europe-west1.firebasedatabase.app/");
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(
+                "https://gamesplatform-d9005-default-rtdb.europe-west1.firebasedatabase.app/");
         databaseReference = firebaseDatabase.getReference();
     }
 
@@ -301,6 +304,23 @@ public class DatabaseService {
         getDataList(GROUP_PATH, Group.class, callback);
     }
 
+    public void getGroupMap(@NotNull final DatabaseCallback<Map<String, Group>> callback) {
+        getDataList(GROUP_PATH, Group.class, new DatabaseCallback<List<Group>>() {
+            @Override
+            public void onCompleted(List<Group> groups) {
+                Map<String, Group> groupMap = new HashMap<>();
+                for (Group group : groups) {
+                    groupMap.put(group.getGroupId(), group);
+                }
+                callback.onCompleted(groupMap);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                callback.onFailed(e);
+            }
+        });
+    }
     /// delete a user from the database
     /// @param uid the user id to delete
     /// @param callback the callback to call when the operation is completed
@@ -394,8 +414,8 @@ public class DatabaseService {
     }
 
 
-    public void updateUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
-        runTransaction(USERS_PATH + "/" + user.getId(), User.class, currentUser -> user, new DatabaseCallback<User>() {
+    public void updateUser(@NotNull final String userId, UnaryOperator<User> function, @Nullable final DatabaseCallback<Void> callback) {
+        runTransaction(USERS_PATH + "/" + userId, User.class, function, new DatabaseCallback<User>() {
             @Override
             public void onCompleted(User object) {
                 if (callback != null) {
@@ -411,9 +431,9 @@ public class DatabaseService {
             }
         });
     }
-
-
-    // endregion User Section
+    public void updateGroup(String groupId, UnaryOperator<Group> function, DatabaseCallback<Group> callback) {
+        runTransaction(GROUP_PATH + "/" + groupId, Group.class, function, callback);
+    }
 
 
 }

@@ -12,6 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GamesPlatform">
         <activity
+            android:name=".screens.ShopActivity"
+            android:exported="false"
+            android:theme="@style/Theme.GamesPlatform" />
+        <activity
+            android:name=".screens.CarEscapeGameOverActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.LandingActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.CarEscapeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.MyGroupActivity"
+            android:exported="false" />
+        <activity
+            android:name=".screens.BearRunner"
+            android:exported="false" />
+        <activity
             android:name=".screens.AdminPageActivity"
             android:exported="false" />
         <activity
@@ -30,7 +49,7 @@
             android:name=".screens.RegisterActivity"
             android:exported="false" />
         <activity
-            android:name=".screens.LandingActivity"
+            android:name=".screens.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

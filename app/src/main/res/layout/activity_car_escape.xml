@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:backgroundTint="#524D4D"
+    tools:context=".screens.CarEscapeActivity">
+
+    <!-- כאן יכנס המשחק מהקוד -->
+
+    <TextView
+        android:id="@+id/timer_text_view"
+        android:layout_width="107dp"
+        android:layout_height="89dp"
+        android:gravity="center"
+        android:text="00:00"
+        android:textColor="#FFFFFF"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toTopOf="@+id/game_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.776" />
+
+    <FrameLayout
+        android:id="@+id/game_container"
+        android:layout_width="356dp"
+        android:layout_height="633dp"
+        android:background="#9CD3D3D3"
+        android:backgroundTint="#786F6F"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/game_over_layout"
+        android:layout_width="250dp"
+        android:layout_height="300dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#AA000000"
+        android:visibility="gone"
+
+        app:layout_constraintTop_toTopOf="@id/game_container"
+        app:layout_constraintBottom_toBottomOf="@id/game_container"
+        app:layout_constraintStart_toStartOf="@id/game_container"
+        app:layout_constraintEnd_toEndOf="@id/game_container">
+
+        <TextView
+            android:id="@+id/game_over_text"
+            android:text="GAME OVER"
+            android:textColor="#FFFFFF"
+            android:textSize="24sp"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/time_text"
+            android:text="Time"
+            android:textColor="#FFFFFF"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/record_text"
+            android:text="Record"
+            android:textColor="#FFFFFF"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/restart_btn"
+            android:text="Play Again"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/home_btn"
+            android:text="Home"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -20,6 +20,8 @@ import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 import com.example.gamesplatform.utils.Validator;
 
+import java.util.function.UnaryOperator;
+
 public class PlayerInfoActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "PlayerInfoActivity";
@@ -113,6 +115,17 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 startActivity(intent);
             }
         });
+        btn_logout = findViewById(R.id.btn_player_profile_logout);
+        btn_logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
+                Intent intent = new Intent(PlayerInfoActivity.this, LandingActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+
+            }
+        });
 
         btn_to_admin_page.setOnClickListener((new View.OnClickListener() {
             @Override
@@ -147,9 +160,6 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         if(v.getId() == R.id.btn_edit_profile) {
             updateUserProfile();
             return;
-        }
-        if(v.getId() == R.id.btn_player_profile_logout) {
-            signOut();
         }
     }
 
@@ -233,7 +243,18 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
     private void updateUserInDatabase(User user) {
         Log.d(TAG, "Updating user in database: " + user.getId());
-        databaseService.updateUser(user, new DatabaseService.DatabaseCallback<Void>() {
+        databaseService.updateUser(user.id, new UnaryOperator<User>() {
+            @Override
+            public User apply(User serverUser) {
+                if (serverUser != null) {
+                    serverUser.setUsername(user.getUsername());
+                    serverUser.setNickname(user.getNickname());
+                    serverUser.setEmail(user.getEmail());
+                    serverUser.setPassword(user.getPassword());
+                }
+                return serverUser;
+            }
+        }, new DatabaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void result) {
                 Log.d(TAG, "User profile updated successfully");
@@ -271,15 +292,5 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             return false;
         }
         return true;
-    }
-
-    private void signOut() {
-        Log.d(TAG, "Sign out button clicked");
-        SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
-
-        Log.d(TAG, "User signed out, redirecting to LandingActivity");
-        Intent landingIntent = new Intent(PlayerInfoActivity.this, LandingActivity.class);
-        landingIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(landingIntent);
     }
 }

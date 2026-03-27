@@ -22,6 +22,12 @@
             android:layout_height="wrap_content"
             android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/tv_user_count"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TextView" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_users_admin_page"
                 android:layout_width="match_parent"
@@ -52,7 +58,7 @@
             android:textSize="24sp" />
 
         <Button
-            android:id="@+id/btn_group_home"
+            android:id="@+id/btn_mygroup_home"
             android:layout_width="102dp"
             android:layout_height="157dp"
             android:backgroundTint="#00FFFFFF"
@@ -60,7 +66,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/btn_main_group5"
+            android:id="@+id/btn_mygroup"
             android:layout_width="107dp"
             android:layout_height="153dp"
             android:layout_marginBottom="4dp"
@@ -69,7 +75,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/btn_group_info"
+            android:id="@+id/btn_mygroup_info"
             android:layout_width="107dp"
             android:layout_height="153dp"
             android:layout_marginBottom="4dp"

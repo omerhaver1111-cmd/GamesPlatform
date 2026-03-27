@@ -16,7 +16,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,26 +23,24 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gamesplatform.adapters.GroupsAdapter;
-import com.example.gamesplatform.adapters.UsersAdapter;
 import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
+import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Predicate;
+import java.util.function.UnaryOperator;
 
 public class GroupsActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "GroupsActivity";
 
     // UI Components
-    private RecyclerView rvGroups, rvUsers;
+    private RecyclerView rvGroups;
     private GroupsAdapter group_adapter;
-    private UsersAdapter usersAdapter; // אדפטר ייעודי למשתמשים
     private TextView btn_to_player_info, btn_to_main;
     private EditText etGroupName, etGroupId;
     private Button btnCreateGroup, btnJoinGroup;
@@ -52,7 +49,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     private String currentUserId;
     private User currentUser;
     // למעלה עם שאר המשתנים
-    private Map<String, Group> groupsMap = new HashMap<>(); // מפה לחיפוש מהיר של שמות קבוצות
     private List<Group> allGroups = new ArrayList<>();
 
     @Override
@@ -76,26 +72,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         }
         currentUserId = currentUser.getId();
 
-        LinearLayout createGwin, my_group;
-
-        if (currentUser.getInGroup()){
-            // If the user is in a group he can't create a new one
-            createGwin = findViewById(R.id.create_group_window);
-            createGwin.setVisibility(View.GONE);
-
-            my_group = findViewById(R.id.my_group_card);
-            my_group.setVisibility(View.VISIBLE);
-        }
-        else{
-            createGwin = findViewById(R.id.create_group_window);
-            createGwin.setVisibility(View.VISIBLE);
-
-            my_group = findViewById(R.id.my_group_card);
-            my_group.setVisibility(View.GONE);
-
-        }
-
-        btn_to_main = findViewById((R.id.btn_group_home));
+        btn_to_main = findViewById((R.id.btn_mygroup_home));
         btn_to_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -104,7 +81,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-        btn_to_player_info = findViewById(R.id.btn_group_info);
+        btn_to_player_info = findViewById(R.id.btn_mygroup_info);
         btn_to_player_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -152,8 +129,8 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     private void initViews() {
         // RecyclerView components
-        rvGroups = findViewById(R.id.rv_users_admin_page);
-        rvUsers = findViewById(R.id.rv_group_users);
+        rvGroups = findViewById(R.id.rv_groups);
+        rvGroups.setLayoutManager(new LinearLayoutManager(this));
 
         // Create group components
         etGroupName = findViewById(R.id.et_group_name);
@@ -170,7 +147,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void setupRecyclerView() {
-        rvGroups.setLayoutManager(new LinearLayoutManager(this));
         group_adapter = new GroupsAdapter(new GroupsAdapter.OnGroupListener() {
             @Override
             public void onClick(Group group) {
@@ -217,17 +193,16 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             public void onCompleted(List<Group> groups) {
                 GroupsActivity.this.allGroups.clear();
                 GroupsActivity.this.allGroups.addAll(groups);
+                group_adapter.setGroups(groups);
                 String groupName = etGroupId.getText().toString();
                 filterGroups(groupName);
             }
             @Override
             public void onFailed(Exception e)
             {
-
+                Log.e(TAG, "Failed to load groups", e);
             }
-
         });
-
     }
 
     @Override
@@ -285,7 +260,15 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     private void updateUserInDatabase(User user) {
         Log.d(TAG, "Updating user in database: " + user.getId());
-        databaseService.updateUser(user, new DatabaseService.DatabaseCallback<Void>() {
+        databaseService.updateUser(user.id, new UnaryOperator<User>() {
+            @Override
+            public User apply(User serverUser) {
+                if (serverUser != null) {
+                    serverUser.setInGroup(true);
+                }
+                return serverUser;
+            }
+        }, new DatabaseService.DatabaseCallback<Void>() {
             @Override
             public void onCompleted(Void result) {
                 Log.d(TAG, "User profile updated successfully");
@@ -309,46 +292,64 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
-        Log.d(TAG, "Joining group: " + groupId);
+        // חיפוש הקבוצה ברשימה allGroups
+        Group targetGroup = null;
+        for (Group g : allGroups) {
+            if (g.id != null && g.id.equals(groupId)) {
+                targetGroup = g;
+                break;
+            }
+        }
 
-        // Check if group exists
-//        groupsRef.child(groupId).get().addOnCompleteListener(task -> {
-//            if (task.isSuccessful()) {
-//                DataSnapshot snapshot = task.getResult();
-//                if (snapshot.exists()) {
-//                    Group group = snapshot.getValue(Group.class);
-//
-//                    if (group != null) {
-//                        if (group.isMember(currentUserId)) {
-//                            Toast.makeText(this, "You are already in this group", Toast.LENGTH_SHORT).show();
-//                        } else {
-//                            // Add user to group
-//                            group.addMember(currentUserId);
-//                            groupsRef.child(groupId).setValue(group)
-//                                    .addOnSuccessListener(aVoid -> {
-//                                        Log.d(TAG, "Joined group successfully");
-//                                        Toast.makeText(GroupsActivity.this,
-//                                                "Joined group: " + group.groupName,
-//                                                Toast.LENGTH_SHORT).show();
-//                                        etGroupId.setText("");
-//                                    })
-//                                    .addOnFailureListener(e -> {
-//                                        Log.e(TAG, "Error joining group", e);
-//                                        Toast.makeText(GroupsActivity.this,
-//                                                "Failed to join group",
-//                                                Toast.LENGTH_SHORT).show();
-//                                    });
-//                        }
-//                    }
-//                } else {
-//                    Toast.makeText(this, "Group not found", Toast.LENGTH_SHORT).show();
-//                }
-//            } else {
-//                Log.e(TAG, "Error checking group", task.getException());
-//                Toast.makeText(this, "Error checking group", Toast.LENGTH_SHORT).show();
-//            }
-//        });
+        if (targetGroup == null) {
+            Toast.makeText(this, "Group not found", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (targetGroup.isMember(currentUserId)) {
+            Toast.makeText(this, "You are already in this group", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // הוספת המשתמש לאובייקט הקבוצה
+        targetGroup.addMember(currentUserId);
+
+        // עדכון ב-Firebase דרך ה-Service
+        DatabaseService.getInstance().updateGroup(targetGroup.getGroupId(), new UnaryOperator<Group>() {
+            @Override
+            public Group apply(Group serverGroup) {
+                if (serverGroup != null)
+                {
+                    serverGroup.addMember(currentUserId);
+                }
+                return serverGroup;
+            }
+        }, new DatabaseService.DatabaseCallback<Group>() {
+            @Override
+            public void onCompleted(Group updatedServerGroup) {
+                Log.d(TAG, "Joined group successfully");
+                Toast.makeText(GroupsActivity.this, "Joined group!", Toast.LENGTH_SHORT).show();
+                etGroupId.setText("");
+
+                // עדכון המשתמש שהצטרף לקבוצה
+                currentUser.setInGroup(true);
+                SharedPreferencesUtil.saveUser(GroupsActivity.this, currentUser);
+                updateUserInDatabase(currentUser);
+
+                Intent intent = new Intent(GroupsActivity.this, MyGroupActivity.class);
+                startActivity(intent);
+
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Log.e(TAG, "Error joining group", e);
+                Toast.makeText(GroupsActivity.this, "Failed to join group", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
 
     private void filterGroups(String text) {
         List<Group> filterGroups = new ArrayList<>(allGroups);

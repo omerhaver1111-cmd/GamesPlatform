@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,18 +15,21 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
+import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
 import com.example.gamesplatform.services.DatabaseService;
 
+import java.util.Map;
+
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    Button btn_logout;
-    TextView btn_to_player_info, btn_to_main, btn_to_group, tv_nick_name;
+    Button btn_logout, play_btn;
+    TextView btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop, tv_nick_name;
     private DatabaseService databaseService;
 
     @Override
@@ -77,11 +81,54 @@ public class MainActivity extends AppCompatActivity {
         btn_to_group.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
+                User currentUser = SharedPreferencesUtil.getUser(MainActivity.this);
+                if (currentUser == null) {
+                    Log.e(TAG, "No logged in user");
+                    return;
+                }
+                if (currentUser.isInGroup()) {
+                    databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
+                        @Override
+                        public void onCompleted(Map<String, Group> groupMap) {
+                            Group group = currentUser.getMyGroup(groupMap);
+                            if (group == null) {
+                                Toast.makeText(MainActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            Intent intent = new Intent(MainActivity.this, MyGroupActivity.class);
+                            intent.putExtra("GROUP_ID", group.getGroupId());
+                            startActivity(intent);
+                        }
+                        @Override
+                        public void onFailed(Exception e) {
+                            Toast.makeText(MainActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "getGroupMap failed", e);
+                        }
+                    });
+                }
+                else{
+                    Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+        btn_to_shop = findViewById(R.id.btn_main_shop);
+        btn_to_shop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, ShopActivity.class);
                 startActivity(intent);
             }
         });
 
+        play_btn = findViewById(R.id.play_button);
+        play_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, CarEscapeActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void setPlayerInfo(TextView tvNickName) {

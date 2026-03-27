@@ -63,12 +63,8 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         Group userGroup = user.getMyGroup(groupsMap);
 
         if (userGroup != null) {
-            holder.tvGroupName.setText(userGroup.getGroupName());
-            showGroup = true;
-        }
-        else if (userGroup.getGroupName() != null && !userGroup.getGroupName().isEmpty()) {
             // גיבוי אם הקבוצות עוד לא נטענו
-            holder.tvGroupName.setText(userGroup.getGroupName());
+            holder.tvGroupName.setText(userGroup.getGroupName().trim());
             showGroup = true;
         } else {
             holder.tvGroupName.setText("");
@@ -93,6 +89,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
                 listener.onUserClick(user);
             }
         });
+    }
+
+    public void setUserList(List<User> users) {
+        this.users.clear();
+        this.users.addAll(users);
+        notifyDataSetChanged();
     }
 
     @Override
