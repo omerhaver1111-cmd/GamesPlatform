@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -15,48 +17,28 @@
             android:name=".screens.ShopActivity"
             android:exported="false"
             android:theme="@style/Theme.GamesPlatform" />
-        <activity
-            android:name=".screens.CarEscapeGameOverActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.LandingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.CarEscapeActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.MyGroupActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.BearRunner"
-            android:exported="false" />
-        <activity
-            android:name=".screens.AdminPageActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.GroupsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.PlayerInfoActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.MainActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.LoginActivity"
-            android:exported="false" />
-        <activity
-            android:name=".screens.RegisterActivity"
-            android:exported="false" />
+
+        <activity android:name=".screens.CarEscapeGameOverActivity" android:exported="false" />
+        <activity android:name=".screens.LandingActivity" android:exported="false" />
+        <activity android:name=".screens.CarEscapeActivity" android:exported="false" />
+        <activity android:name=".screens.MyGroupActivity" android:exported="false" />
+        <activity android:name=".screens.BearRunner" android:exported="false" />
+        <activity android:name=".screens.AdminPageActivity" android:exported="false" />
+        <activity android:name=".screens.GroupsActivity" android:exported="false" />
+        <activity android:name=".screens.PlayerInfoActivity" android:exported="false" />
+        <activity android:name=".screens.MainActivity" android:exported="false" />
+        <activity android:name=".screens.LoginActivity" android:exported="false" />
+        <activity android:name=".screens.RegisterActivity" android:exported="false" />
+
         <activity
             android:name=".screens.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

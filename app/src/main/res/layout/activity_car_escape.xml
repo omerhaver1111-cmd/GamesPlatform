@@ -44,7 +44,6 @@
         android:gravity="center"
         android:background="#AA000000"
         android:visibility="gone"
-
         app:layout_constraintTop_toTopOf="@id/game_container"
         app:layout_constraintBottom_toBottomOf="@id/game_container"
         app:layout_constraintStart_toStartOf="@id/game_container"
@@ -62,6 +61,15 @@
         <TextView
             android:id="@+id/time_text"
             android:text="Time"
+            android:textColor="#FFFFFF"
+            android:layout_margin="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <!-- ✅ הוספה -->
+        <TextView
+            android:id="@+id/coins_text"
+            android:text="Coins"
             android:textColor="#FFFFFF"
             android:layout_margin="8dp"
             android:layout_width="wrap_content"

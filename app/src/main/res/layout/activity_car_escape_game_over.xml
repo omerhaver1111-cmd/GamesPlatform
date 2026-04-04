@@ -9,6 +9,15 @@
     android:background="#333333">
 
     <TextView
+        android:id="@+id/coins_text"
+        android:text="Coins"
+        android:textColor="#FFFFFF"
+        android:layout_margin="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="24sp"/>
+
+    <TextView
         android:id="@+id/time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

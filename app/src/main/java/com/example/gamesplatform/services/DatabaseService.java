@@ -431,8 +431,23 @@ public class DatabaseService {
             }
         });
     }
-    public void updateGroup(String groupId, UnaryOperator<Group> function, DatabaseCallback<Group> callback) {
-        runTransaction(GROUP_PATH + "/" + groupId, Group.class, function, callback);
+
+    public void updateGroup(@NotNull final String groupId, @NotNull final UnaryOperator<Group> function, @NotNull final DatabaseCallback<Group> callback) {
+        runTransaction(GROUP_PATH + "/" + groupId, Group.class, function, new DatabaseCallback<Group>() {
+            @Override
+            public void onCompleted(Group object) {
+                if (callback != null) {
+                    callback.onCompleted(null);
+                }
+            }
+
+                @Override
+                public void onFailed(Exception e) {
+                    if (callback != null) {
+                        callback.onFailed(e);
+                    }
+                }
+            });
     }
 
 

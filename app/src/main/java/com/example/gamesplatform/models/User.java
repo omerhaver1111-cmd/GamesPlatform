@@ -114,7 +114,6 @@ public class User implements Serializable {
         this.carGameRecord = carGameRecord;
     }
 
-
     public void setExp(int exp) {
         this.exp = exp;
     }
@@ -134,6 +133,20 @@ public class User implements Serializable {
             }
         }
         return null;
+    }
+
+    public static int levelCalculate(long xp) {
+        // Level = 0.2 * sqrt(XP)
+        int level = (int) Math.floor(0.2 * Math.sqrt(xp));
+
+        return Math.max(1, level);
+    }
+
+    public static long getRemainingExp(long xp) {
+        int currentLevel = levelCalculate(xp);
+        // חישוב כמות הexp עבור הקמה
+        long xpAtLevel = (long) Math.pow(currentLevel / 0.2, 2);
+        return xp - xpAtLevel;
     }
 
     @Override

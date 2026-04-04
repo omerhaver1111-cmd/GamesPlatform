@@ -6,7 +6,7 @@ import android.os.CountDownTimer;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
+import android.widget.GridLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
@@ -23,7 +23,8 @@ import java.util.Calendar;
 import java.util.List;
 
 public class ShopActivity extends AppCompatActivity {
-    private LinearLayout upgradesContainer;
+
+    private GridLayout upgradesContainer;
     private TextView timerText;
 
     private List<Upgrade> upgrades;
@@ -36,20 +37,22 @@ public class ShopActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_shop);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
         upgradesContainer = findViewById(R.id.upgradesContainer);
         timerText = findViewById(R.id.timerText);
 
         createUpgrades();
+        loadSavedUpgrades();
         loadUpgrades();
         startTimer();
     }
 
-    // יצירת שדרוגים
     private void createUpgrades() {
         upgrades = new ArrayList<>();
         upgrades.add(new Upgrade("Speed Boost", "Increase speed by 20%", 200));
@@ -58,7 +61,6 @@ public class ShopActivity extends AppCompatActivity {
         upgrades.add(new Upgrade("Double Coins", "x2 coins", 800));
     }
 
-    // טעינת UI
     private void loadUpgrades() {
         upgradesContainer.removeAllViews();
 
@@ -83,11 +85,17 @@ public class ShopActivity extends AppCompatActivity {
 
             btn.setOnClickListener(v -> buyUpgrade(upgrade));
 
+            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+            params.width = 0;
+            params.height = GridLayout.LayoutParams.WRAP_CONTENT;
+            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+            params.setMargins(16, 16, 16, 16);
+
+            view.setLayoutParams(params);
             upgradesContainer.addView(view);
         }
     }
 
-    // קנייה
     private void buyUpgrade(Upgrade upgrade) {
         if (upgrade.isPurchased()) return;
 
@@ -100,7 +108,6 @@ public class ShopActivity extends AppCompatActivity {
         }
     }
 
-    // שמירה
     private void saveUpgrades() {
         SharedPreferences prefs = getSharedPreferences("shop", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
@@ -112,7 +119,6 @@ public class ShopActivity extends AppCompatActivity {
         editor.apply();
     }
 
-    // טעינה
     private void loadSavedUpgrades() {
         SharedPreferences prefs = getSharedPreferences("shop", MODE_PRIVATE);
 
@@ -122,7 +128,6 @@ public class ShopActivity extends AppCompatActivity {
         }
     }
 
-    // טיימר עד 13:00
     private long getTimeUntilReset() {
         Calendar now = Calendar.getInstance();
 
@@ -130,6 +135,7 @@ public class ShopActivity extends AppCompatActivity {
         reset.set(Calendar.HOUR_OF_DAY, 13);
         reset.set(Calendar.MINUTE, 0);
         reset.set(Calendar.SECOND, 0);
+        reset.set(Calendar.MILLISECOND, 0);
 
         if (now.after(reset)) {
             reset.add(Calendar.DAY_OF_YEAR, 1);
@@ -138,12 +144,14 @@ public class ShopActivity extends AppCompatActivity {
         return reset.getTimeInMillis() - now.getTimeInMillis();
     }
 
-    // הפעלת טיימר
     private void startTimer() {
+        if (timer != null) {
+            timer.cancel();
+        }
+
         timer = new CountDownTimer(getTimeUntilReset(), 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-
                 int hours = (int) (millisUntilFinished / (1000 * 60 * 60));
                 int minutes = (int) (millisUntilFinished / (1000 * 60)) % 60;
                 int seconds = (int) (millisUntilFinished / 1000) % 60;
@@ -155,12 +163,11 @@ public class ShopActivity extends AppCompatActivity {
             @Override
             public void onFinish() {
                 resetUpgrades();
-                startTimer(); // מתחיל מחדש
+                startTimer();
             }
         }.start();
     }
 
-    // איפוס יומי
     private void resetUpgrades() {
         for (Upgrade upgrade : upgrades) {
             upgrade.setPurchased(false);
@@ -168,5 +175,13 @@ public class ShopActivity extends AppCompatActivity {
 
         saveUpgrades();
         loadUpgrades();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (timer != null) {
+            timer.cancel();
+        }
     }
 }

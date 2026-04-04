@@ -46,8 +46,11 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
         selectedUid = getIntent().getStringExtra("USER_UID");
         User currentUser = SharedPreferencesUtil.getUser(this);
-        assert currentUser != null;
-
+        if (currentUser == null) {
+            Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
         if (selectedUid == null) {
             selectedUid = currentUser.getId();
         }

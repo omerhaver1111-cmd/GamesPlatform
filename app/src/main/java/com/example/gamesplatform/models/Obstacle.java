@@ -36,7 +36,7 @@ public class Obstacle extends GameObject {
     private int damage = 1;
 
     public Obstacle(int x,int y,Bitmap bmp){
-        super(x,y,140,200,12,bmp);
+        super(x,y,140,240,12,bmp);
     }
 
     public int getDamage(){

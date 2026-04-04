@@ -13,6 +13,7 @@ public class Group implements Serializable {
     public String leaderId;
     public String groupName;    //שם  הקבוצה
     public Map<String, Boolean> members; // if group leader -> true
+    public String bannerImageBase64;
 
 
     public Group() {
@@ -81,7 +82,7 @@ public class Group implements Serializable {
     /**
      * מחזירה רשימה של כל ה-IDs של המשתמשים בקבוצה
      */
-    @Exclude // אנחנו לא רוצים שזה יישמר ב-Firebase
+    @Exclude //  לא יישמר ב-Firebase
     public Set<String> getUserIds() {
         if (this.members == null) {
             return new HashMap<String, Boolean>().keySet();
@@ -89,5 +90,12 @@ public class Group implements Serializable {
         return this.members.keySet();
     }
 
+    public String getBannerImageBase64() {
+        return bannerImageBase64;
+    }
+
+    public void setBannerImageBase64(String bannerImageBase64) {
+        this.bannerImageBase64 = bannerImageBase64;
+    }
 
 }

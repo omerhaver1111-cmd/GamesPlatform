@@ -19,42 +19,51 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- ===== CREATE GROUP ===== -->
         <androidx.cardview.widget.CardView
             android:id="@+id/my_group_cardv"
             android:layout_width="match_parent"
-            android:layout_height="578dp"
+            android:layout_height="617dp"
             app:cardBackgroundColor="#C5B3BEE0"
             app:cardCornerRadius="16dp"
             app:cardElevation="4dp">
 
-            <LinearLayout
-                android:id="@+id/my_group_card"
+            <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:layout_height="match_parent">
 
-                <TextView
-                    android:id="@+id/tv_group_name_my_group"
+                <!-- ✅ Banner -->
+                <ImageView
+                    android:id="@+id/img_group_banner"
                     android:layout_width="match_parent"
-                    android:layout_height="41dp"
-                    android:layout_marginBottom="16dp"
-                    android:gravity="bottom|center"
-                    android:text="My Group"
-                    android:textColor="?attr/colorOnBackground"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
+                    android:layout_height="180dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_launcher_background" />
 
-                <TextView
-                    android:id="@+id/tv_user_count_my_group"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:text="TextView" />
-
-                <ScrollView
+                <!-- ✅ תוכן מעל הבאנר -->
+                <LinearLayout
+                    android:id="@+id/my_group_card"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingTop="180dp">
+
+                    <TextView
+                        android:id="@+id/tv_group_name_my_group"
+                        android:layout_width="match_parent"
+                        android:layout_height="41dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="bottom|center"
+                        android:text="My Group"
+                        android:textColor="?attr/colorOnBackground"
+                        android:textSize="20sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/tv_user_count_my_group"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="TextView" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_my_group_users"
@@ -65,15 +74,30 @@
                         tools:itemCount="3"
                         tools:listitem="@layout/item_user" />
 
-                </ScrollView>
-            </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btn_leave_group"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Leave Group" />
+
+                        <Button
+                            android:id="@+id/btn_upload_banner"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Upload Banner" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </FrameLayout>
 
         </androidx.cardview.widget.CardView>
 
-        <!-- ===== JOIN GROUP ===== -->
-
-
-        <!-- ===== RECYCLER VIEW FOR GROUPS LIST ===== -->
 
 
     </LinearLayout>
