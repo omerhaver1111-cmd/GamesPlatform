@@ -1,11 +1,12 @@
 package com.example.gamesplatform.screens;
 
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Point;
+import android.graphics.*;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.KeyEvent;
+import android.view.View;
+import android.widget.*;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -14,191 +15,215 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
-
-import android.os.Handler;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.FrameLayout;
+import com.example.gamesplatform.models.User;
+import com.example.gamesplatform.services.DatabaseService;
+import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 public class SnakeGameActivity extends AppCompatActivity {
+
+    private FrameLayout game_container;
+    private TextView score_text;
+
+    private LinearLayout game_over_layout;
+    private TextView final_score, record_text;
+    private Button restart_btn, home_btn;
+
+    private DatabaseService databaseService;
+    private User currentUser;
+
+    private GameView gameView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_snake_game);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        FrameLayout gameContainer = findViewById(R.id.game_container);
 
-        gameContainer.post(() -> {
-            int width = gameContainer.getWidth();
-            int height = gameContainer.getHeight();
+        databaseService = DatabaseService.getInstance();
+        loadUser();
 
-            GameView gameView = new GameView(this, width, height);
-            gameContainer.addView(gameView);
+        game_container = findViewById(R.id.game_container);
+        score_text = findViewById(R.id.score_text);
+
+        game_over_layout = findViewById(R.id.game_over_layout);
+        final_score = findViewById(R.id.final_score);
+        record_text = findViewById(R.id.record_text);
+
+        restart_btn = findViewById(R.id.restart_btn);
+        home_btn = findViewById(R.id.home_btn);
+
+        game_over_layout.setVisibility(View.GONE);
+
+        restart_btn.setOnClickListener(v -> recreate());
+        home_btn.setOnClickListener(v -> finish());
+
+        game_container.post(() -> {
+            gameView = new GameView(this, game_container.getWidth(), game_container.getHeight());
+            game_container.addView(gameView);
+        });
+
+        findViewById(R.id.btn_up).setOnClickListener(v -> gameView.setDirection(0,-1));
+        findViewById(R.id.btn_down).setOnClickListener(v -> gameView.setDirection(0,1));
+        findViewById(R.id.btn_left).setOnClickListener(v -> gameView.setDirection(-1,0));
+        findViewById(R.id.btn_right).setOnClickListener(v -> gameView.setDirection(1,0));
+    }
+
+    private void loadUser(){
+        User saved = SharedPreferencesUtil.getUser(this);
+        if(saved == null) return;
+
+        databaseService.getUser(saved.getId(), new DatabaseService.DatabaseCallback<User>() {
+            @Override public void onCompleted(User user) { currentUser = user; }
+            @Override public void onFailed(Exception e) {}
         });
     }
+
+    public void showGameOver(int score){
+        game_over_layout.setVisibility(View.VISIBLE);
+
+        int record = currentUser != null ? currentUser.getSnakeRecord() : 0;
+        if(score > record) record = score;
+
+        final_score.setText("Score: " + score);
+        record_text.setText("Record: " + record);
+
+        if(currentUser != null){
+            int finalRecord = record;
+
+            databaseService.updateUser(currentUser.getId(), user -> {
+                user.setSnakeRecord(finalRecord);
+                user.setMoney(user.getMoney() + score);
+                return user;
+            }, null);
+        }
+    }
+
+    // ================= GAME =================
+
     public class GameView extends View {
 
-        private int screenWidth, screenHeight;
-        private Paint paint;
-
-        private int gridSize = 50;
+        private int width, height;
+        private int grid = 40;
 
         private ArrayList<Point> snake = new ArrayList<>();
         private Point food;
 
-        private int dirX = 1;
-        private int dirY = 0;
+        private int dx = 1, dy = 0;
 
         private Handler handler = new Handler();
-        private Runnable runnable;
-
         private boolean gameOver = false;
 
-        public GameView(Context context, int width, int height) {
+        private int score = 0;
+        private int speed = 150;
+
+        private Paint paint = new Paint();
+        private Random random = new Random();
+
+        public GameView(Context context, int w, int h) {
             super(context);
 
-            this.screenWidth = width;
-            this.screenHeight = height;
+            this.width = w;
+            this.height = h;
 
-            paint = new Paint();
+            setFocusable(true);
+            setFocusableInTouchMode(true);
+            requestFocus();
 
-            // נחש התחלתי
             snake.add(new Point(5,5));
             snake.add(new Point(4,5));
-            snake.add(new Point(3,5));
 
             spawnFood();
-
-            runnable = new Runnable() {
-                @Override
-                public void run() {
-                    update();
-                    invalidate();
-                    handler.postDelayed(this, 150);
-                }
-            };
-
-            handler.post(runnable);
+            handler.post(loop);
         }
 
-        private void spawnFood() {
-            int x = (int)(Math.random() * (screenWidth / gridSize));
-            int y = (int)(Math.random() * (screenHeight / gridSize));
-            food = new Point(x, y);
+        private Runnable loop = new Runnable() {
+            @Override
+            public void run() {
+                update();
+                invalidate();
+                handler.postDelayed(this, speed);
+            }
+        };
+
+        private void spawnFood(){
+            food = new Point(random.nextInt(width/grid), random.nextInt(height/grid));
         }
 
-        private void update() {
+        public void setDirection(int x, int y){
+            if(x == -dx && y == -dy) return;
+            dx = x; dy = y;
+        }
+
+        private void update(){
             if(gameOver) return;
 
             Point head = snake.get(0);
+            int nx = head.x + dx;
+            int ny = head.y + dy;
 
-            int newX = head.x + dirX;
-            int newY = head.y + dirY;
-
-            // קירות
-            if(newX < 0 || newY < 0 ||
-                    newX >= screenWidth / gridSize ||
-                    newY >= screenHeight / gridSize){
-                gameOver = true;
-                return;
+            if(nx<0||ny<0||nx>=width/grid||ny>=height/grid){
+                endGame(); return;
             }
 
-            // עצמו
-            for(Point p : snake){
-                if(p.x == newX && p.y == newY){
-                    gameOver = true;
-                    return;
+            for(Point p: snake){
+                if(p.x==nx && p.y==ny){
+                    endGame(); return;
                 }
             }
 
-            snake.add(0, new Point(newX, newY));
+            snake.add(0,new Point(nx,ny));
 
-            // אוכל
-            if(newX == food.x && newY == food.y){
+            if(nx==food.x && ny==food.y){
+                score++;
+                score_text.setText("Score: "+score);
+
+                if(speed>60) speed-=5;
+
                 spawnFood();
             } else {
-                snake.remove(snake.size() - 1);
+                snake.remove(snake.size()-1);
             }
         }
 
-        @Override
-        protected void onDraw(Canvas canvas) {
-            super.onDraw(canvas);
+        private void endGame(){
+            gameOver = true;
+            handler.removeCallbacks(loop);
+            showGameOver(score);
+        }
 
+        @Override
+        protected void onDraw(Canvas canvas){
             canvas.drawColor(Color.BLACK);
 
-            // אוכל
             paint.setColor(Color.RED);
-            canvas.drawRect(
-                    food.x * gridSize,
-                    food.y * gridSize,
-                    (food.x + 1) * gridSize,
-                    (food.y + 1) * gridSize,
-                    paint
-            );
+            canvas.drawRect(food.x*grid, food.y*grid,
+                    (food.x+1)*grid,(food.y+1)*grid,paint);
 
-            // נחש
             paint.setColor(Color.GREEN);
-            for(Point p : snake){
-                canvas.drawRect(
-                        p.x * gridSize,
-                        p.y * gridSize,
-                        (p.x + 1) * gridSize,
-                        (p.y + 1) * gridSize,
-                        paint
-                );
-            }
-
-            // Game Over
-            if(gameOver){
-                paint.setColor(Color.WHITE);
-                paint.setTextSize(80);
-                canvas.drawText("GAME OVER", screenWidth/4f, screenHeight/2f, paint);
+            for(Point p: snake){
+                canvas.drawRect(p.x*grid, p.y*grid,
+                        (p.x+1)*grid,(p.y+1)*grid,paint);
             }
         }
 
         @Override
-        public boolean onTouchEvent(MotionEvent event) {
-
-            switch (event.getAction()) {
-
-                case MotionEvent.ACTION_DOWN:
-                    return true;
-
-                case MotionEvent.ACTION_UP:
-                    float x = event.getX();
-                    float y = event.getY();
-
-                    Point head = snake.get(0);
-
-                    float centerX = screenWidth / 2f;
-                    float centerY = screenHeight / 2f;
-
-                    if(Math.abs(x - centerX) > Math.abs(y - centerY)){
-                        if(x > centerX){
-                            dirX = 1; dirY = 0;
-                        } else {
-                            dirX = -1; dirY = 0;
-                        }
-                    } else {
-                        if(y > centerY){
-                            dirX = 0; dirY = 1;
-                        } else {
-                            dirX = 0; dirY = -1;
-                        }
-                    }
-                    return true;
+        public boolean onKeyDown(int keyCode, KeyEvent event){
+            switch(keyCode){
+                case KeyEvent.KEYCODE_DPAD_UP: setDirection(0,-1); return true;
+                case KeyEvent.KEYCODE_DPAD_DOWN: setDirection(0,1); return true;
+                case KeyEvent.KEYCODE_DPAD_LEFT: setDirection(-1,0); return true;
+                case KeyEvent.KEYCODE_DPAD_RIGHT: setDirection(1,0); return true;
             }
-
-            return super.onTouchEvent(event);
+            return super.onKeyDown(keyCode,event);
         }
     }
 }

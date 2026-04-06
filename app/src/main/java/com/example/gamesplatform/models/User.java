@@ -19,6 +19,7 @@ public class User implements Serializable {
     public int money;
     public int exp;
     public int carGameRecord;
+    public int setSnakeRecord;
 
     public User() {
     }
@@ -112,6 +113,14 @@ public class User implements Serializable {
 
     public void setCarGameRecord(int carGameRecord) {
         this.carGameRecord = carGameRecord;
+    }
+
+    public int getSnakeRecord() {
+        return setSnakeRecord;
+    }
+
+    public void setSnakeRecord(int setSnakeRecord) {
+        this.setSnakeRecord = setSnakeRecord;
     }
 
     public void setExp(int exp) {
