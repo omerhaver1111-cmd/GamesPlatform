@@ -26,7 +26,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
 
     Button toLanding;
 
-    private EditText etPassword;
+    private EditText etPassword, etPassword2;
     private TextInputLayout etEmail, etFName, etLName;
     private Button btnRegister, btnMainToInfo, btnMainToGroup;
     private TextView tvLogin;
@@ -46,6 +46,7 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         /// get the views
         etEmail = findViewById(R.id.et_register_email);
         etPassword = findViewById(R.id.et_login_password);
+        etPassword2 = findViewById(R.id.et_register_password2);
         etFName = findViewById(R.id.et_register_first_name);
         etLName = findViewById(R.id.et_register_nick_name);
         btnRegister = findViewById(R.id.btn_login_login);
@@ -75,19 +76,21 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             /// get the input from the user
             String email = etEmail.getEditText().getText().toString();
             String password = etPassword.getText().toString();
+            String password2 = etPassword2.getText().toString();
             String fName = etFName.getEditText().getText().toString();
             String nName = etLName.getEditText().getText().toString();
 
             /// log the input
             Log.d(TAG, "onClick: Email: " + email);
             Log.d(TAG, "onClick: Password: " + password);
+            Log.d(TAG, "onClick: Password2: " + password2);
             Log.d(TAG, "onClick: First Name: " + fName);
             Log.d(TAG, "onClick: Last Name: " + nName);
 
 
             /// Validate input
             Log.d(TAG, "onClick: Validating input...");
-            if (!checkInput(email, password, fName, nName)) {
+            if (!checkInput(email, password, password2, fName, nName)) {
                 /// stop if input is invalid
                 return;
             }
@@ -105,7 +108,12 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
     /// Check if the input is valid
     /// @return true if the input is valid, false otherwise
     /// @see Validator
-    private boolean checkInput(String email, String password, String fName, String nName) {
+    private boolean checkInput(String email, String password, String password2, String fName, String nName) {
+
+        if (email.isEmpty() || password.isEmpty() || password2.isEmpty() || fName.isEmpty() || nName.isEmpty()) {
+            Toast.makeText(this, "Please fill all fields", Toast.LENGTH_SHORT).show();
+            return false;
+        }
 
         if (!Validator.isEmailValid(email)) {
             Log.e(TAG, "checkInput: Invalid email address");
@@ -122,6 +130,13 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
             etPassword.setError("Password must be at least 6 characters long");
             /// set focus to password field
             etPassword.requestFocus();
+            return false;
+        }
+
+        if (!password.equals(password2)) {
+            Log.e(TAG, "checkInput: Passwords do not match");
+            etPassword2.setError("Passwords do not match");
+            etPassword2.requestFocus();
             return false;
         }
 

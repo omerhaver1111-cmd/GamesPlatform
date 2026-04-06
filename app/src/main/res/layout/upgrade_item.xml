@@ -16,6 +16,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="#535C62"
         android:orientation="vertical"
         android:padding="12dp">
 
@@ -24,33 +25,33 @@
             android:id="@+id/title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:gravity="center"
             android:text="Upgrade"
             android:textColor="#FFFFFF"
-            android:textStyle="bold"
             android:textSize="16sp"
-            android:gravity="center"
-            android:layout_marginBottom="4dp"/>
+            android:textStyle="bold" />
 
         <!-- תיאור קצר -->
         <TextView
             android:id="@+id/desc"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
             android:text="Description"
             android:textColor="#CCCCCC"
-            android:textSize="12sp"
-            android:gravity="center"
-            android:layout_marginBottom="8dp"/>
+            android:textSize="12sp" />
 
         <!-- כפתור קנייה -->
         <Button
             android:id="@+id/buyBtn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Buy"
-            android:textColor="#FFFFFF"
             android:backgroundTint="#5BC0EB"
-            android:padding="8dp"/>
+            android:padding="8dp"
+            android:text="Buy"
+            android:textColor="#FFFFFF" />
 
     </LinearLayout>
 

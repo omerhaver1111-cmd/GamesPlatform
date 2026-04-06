@@ -21,12 +21,23 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical" >
+            <TextView
+                android:id="@+id/tv_usres"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="Users List"
+                android:textColor="#D4B2DE"
+                android:textSize="25sp" />
 
             <TextView
                 android:id="@+id/tv_user_count"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="TextView" />
+                android:gravity="center"
+                android:text="TextView"
+                android:textColor="#BBA2C1"
+                android:textSize="20sp" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_users_admin_page"
@@ -49,7 +60,7 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <Button
-            android:id="@+id/btn_main_shop4"
+            android:id="@+id/btn_admin_shop"
             android:layout_width="103dp"
             android:layout_height="153dp"
             android:layout_marginBottom="4dp"
@@ -58,7 +69,7 @@
             android:textSize="24sp" />
 
         <Button
-            android:id="@+id/btn_mygroup_home"
+            android:id="@+id/btn_admin_home"
             android:layout_width="102dp"
             android:layout_height="157dp"
             android:backgroundTint="#00FFFFFF"
@@ -66,7 +77,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/btn_mygroup"
+            android:id="@+id/btn_admin_group"
             android:layout_width="107dp"
             android:layout_height="153dp"
             android:layout_marginBottom="4dp"
@@ -75,7 +86,7 @@
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/btn_mygroup_info"
+            android:id="@+id/btn_admin_info"
             android:layout_width="107dp"
             android:layout_height="153dp"
             android:layout_marginBottom="4dp"

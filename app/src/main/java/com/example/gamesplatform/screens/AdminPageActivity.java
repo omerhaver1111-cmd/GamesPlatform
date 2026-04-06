@@ -3,7 +3,10 @@ package com.example.gamesplatform.screens;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,15 +18,19 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gamesplatform.R;
 import com.example.gamesplatform.adapters.UsersAdapter;
+import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
+import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
 import java.util.List;
+import java.util.Map;
 
 public class AdminPageActivity extends BaseActivity {
     private static final String TAG = "AdminPageActivity";
     private UsersAdapter userAdapter;
     private TextView tvUserCount;
+    private Button btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +56,69 @@ public class AdminPageActivity extends BaseActivity {
             }
         });
         usersList.setAdapter(userAdapter);
+
+        btn_to_main = findViewById((R.id.btn_admin_home));
+        btn_to_main.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AdminPageActivity.this, MainActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_to_player_info = findViewById(R.id.btn_admin_info);
+        btn_to_player_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AdminPageActivity.this, PlayerInfoActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        btn_to_group = findViewById(R.id.btn_admin_group);
+        btn_to_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                User currentUser = SharedPreferencesUtil.getUser(AdminPageActivity.this);
+                if (currentUser == null) {
+                    Log.e(TAG, "No logged in user");
+                    return;
+                }
+                if (currentUser.isInGroup()) {
+                    databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
+                        @Override
+                        public void onCompleted(Map<String, Group> groupMap) {
+                            Group group = currentUser.getMyGroup(groupMap);
+                            if (group == null) {
+                                Toast.makeText(AdminPageActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            Intent intent = new Intent(AdminPageActivity.this, MyGroupActivity.class);
+                            intent.putExtra("GROUP_ID", group.getGroupId());
+                            startActivity(intent);
+                        }
+                        @Override
+                        public void onFailed(Exception e) {
+                            Toast.makeText(AdminPageActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "getGroupMap failed", e);
+                        }
+                    });
+                }
+                else{
+                    Intent intent = new Intent(AdminPageActivity.this, GroupsActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btn_to_shop = findViewById(R.id.btn_admin_shop);
+        btn_to_shop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(AdminPageActivity.this, ShopActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
 

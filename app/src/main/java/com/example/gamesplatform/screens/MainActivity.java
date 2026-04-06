@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,8 +29,10 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    Button btn_logout, play_btn;
-    TextView btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop, tv_nick_name;
+    Button btn_logout, play_car_btn, play_snake_btn;
+    TextView btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop;
+    TextView tv_level, tv_nick_name, tv_coins;
+    ProgressBar pbar_level;
     private DatabaseService databaseService;
 
     @Override
@@ -44,8 +47,7 @@ public class MainActivity extends AppCompatActivity {
         });
         databaseService = new DatabaseService();
 
-        tv_nick_name = findViewById(R.id.tv_main_nick_name);
-        setPlayerInfo(tv_nick_name);
+        setPlayerInfo();
 
         btn_logout = findViewById(R.id.btn_main_logout);
         btn_logout.setOnClickListener(new View.OnClickListener() {
@@ -112,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
         btn_to_shop = findViewById(R.id.btn_main_shop);
         btn_to_shop.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,17 +124,30 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        play_btn = findViewById(R.id.play_button);
-        play_btn.setOnClickListener(new View.OnClickListener() {
+        play_car_btn = findViewById(R.id.play_button);
+        play_car_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, CarEscapeActivity.class);
                 startActivity(intent);
             }
         });
+        play_snake_btn = findViewById(R.id.play_snake_button);
+        play_snake_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, SnakeGameActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
-    private void setPlayerInfo(TextView tvNickName) {
+    private void setPlayerInfo() {
+        tv_nick_name = findViewById(R.id.tv_main_nick_name);
+        tv_level = findViewById(R.id.tv_main_level);
+        pbar_level = findViewById(R.id.expProgressBar);
+        tv_coins = findViewById(R.id.coins);
+
         User currentUser = SharedPreferencesUtil.getUser(this);
         if (currentUser == null) {
             Log.e(TAG, "No logged in user");
@@ -143,9 +159,19 @@ public class MainActivity extends AppCompatActivity {
         databaseService.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
-                if (user != null && user.getNickname() != null) {
-                    tvNickName.setText(user.getNickname());
+                if (user != null){
+                    if (user.getNickname() != null) {
+                        tv_nick_name.setText(user.getNickname());
+                    }
+                    int level = User.levelCalculate(user.getExp());
+                    tv_level.setText(String.valueOf("Lv."+level));
+
+                    int remainingExp = User.getRemainingExp(user.getExp());
+                    pbar_level.setProgress(remainingExp);
+
+                    tv_coins.setText(user.getMoney()+"c");
                 }
+
             }
 
             @Override

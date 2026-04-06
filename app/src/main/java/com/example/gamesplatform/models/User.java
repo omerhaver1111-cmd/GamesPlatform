@@ -138,14 +138,13 @@ public class User implements Serializable {
     public static int levelCalculate(long xp) {
         // Level = 0.2 * sqrt(XP)
         int level = (int) Math.floor(0.2 * Math.sqrt(xp));
-
         return Math.max(1, level);
     }
 
-    public static long getRemainingExp(long xp) {
+    public static int getRemainingExp(int xp) {
         int currentLevel = levelCalculate(xp);
-        // חישוב כמות הexp עבור הקמה
-        long xpAtLevel = (long) Math.pow(currentLevel / 0.2, 2);
+        // חישוב כמות הexp עבור הרמה
+        int xpAtLevel = (int) Math.pow(currentLevel / 0.2, 2);
         return xp - xpAtLevel;
     }
 

@@ -123,6 +123,8 @@ public class MyGroupActivity extends AppCompatActivity {
                 if (group == null) return null;
 
                 group.removeMember(currentUser.getId());
+                currentUser.setInGroup(false);
+
                 return group;
 
             }, new DatabaseService.DatabaseCallback<Group>() {

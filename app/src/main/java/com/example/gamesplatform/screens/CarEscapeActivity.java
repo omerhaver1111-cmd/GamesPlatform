@@ -139,8 +139,10 @@ public class CarEscapeActivity extends AppCompatActivity {
             if(user == null) return null;
 
             int newMoney = user.getMoney() + coins;
+            int newexp = user.getExp() + (time - time %10);
 
             user.setMoney(newMoney);
+            user.setExp(newexp);
             user.setCarGameRecord(finalRecord);
             currentUser.setMoney(newMoney);
 
