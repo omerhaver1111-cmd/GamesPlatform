@@ -16,6 +16,7 @@ public class Upgrade {
     public void setName(String name) {
         this.name = name;
     }
+
     public String getName() {
         return name;
     }
@@ -23,6 +24,7 @@ public class Upgrade {
     public void setDescription(String description) {
         this.description = description;
     }
+
     public String getDescription() {
         return description;
     }
@@ -31,7 +33,10 @@ public class Upgrade {
         this.price = price;
     }
 
-    public int getPrice() { return price; }
+    public int getPrice() {
+        return price;
+    }
+
     public boolean isPurchased() { return isPurchased; }
 
     public void setPurchased(boolean purchased) {

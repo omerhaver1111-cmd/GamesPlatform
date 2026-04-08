@@ -15,11 +15,14 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 import com.example.gamesplatform.utils.Validator;
 
+import java.util.Map;
 import java.util.function.UnaryOperator;
 
 public class PlayerInfoActivity extends BaseActivity implements View.OnClickListener {
@@ -27,7 +30,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
     private static final String TAG = "PlayerInfoActivity";
     private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPassword;
     private TextView tvUserDisplayEmail, btn_to_player_info,btn_to_group, btn_to_main, tv_username,tv_nick_name,tv_level,tv_money;
-    private Button btnUpdateProfile, btn_logout, btn_to_admin_page;
+    private Button btnUpdateProfile, btn_logout, btn_to_admin_page, btn_to_shop;
     String selectedUid;
     User selectedUser;
     boolean isCurrentUser = false;
@@ -100,21 +103,57 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 startActivity(intent);
             }
         });
+
         btn_to_player_info = findViewById(R.id.btn_main_info);
         btn_to_player_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
                 Intent intent = new Intent(PlayerInfoActivity.this, PlayerInfoActivity.class);
                 startActivity(intent);
             }
         });
 
-        btn_to_group = findViewById(R.id.btn_main_group2);
+        btn_to_group = findViewById(R.id.btn_info_to_group);
         btn_to_group.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(PlayerInfoActivity.this, GroupsActivity.class);
+                User currentUser = SharedPreferencesUtil.getUser(PlayerInfoActivity.this);
+                if (currentUser == null) {
+                    Log.e(TAG, "No logged in user");
+                    return;
+                }
+                if (currentUser.isInGroup()) {
+                    databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
+                        @Override
+                        public void onCompleted(Map<String, Group> groupMap) {
+                            Group group = currentUser.getMyGroup(groupMap);
+                            if (group == null) {
+                                Toast.makeText(PlayerInfoActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            Intent intent = new Intent(PlayerInfoActivity.this, MyGroupActivity.class);
+                            intent.putExtra("GROUP_ID", group.getGroupId());
+                            startActivity(intent);
+                        }
+                        @Override
+                        public void onFailed(Exception e) {
+                            Toast.makeText(PlayerInfoActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
+                            Log.e(TAG, "getGroupMap failed", e);
+                        }
+                    });
+                }
+                else{
+                    Intent intent = new Intent(PlayerInfoActivity.this, GroupsActivity.class);
+                    startActivity(intent);
+                }
+            }
+        });
+
+        btn_to_shop = findViewById(R.id.btn_main_shop);
+        btn_to_shop.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(PlayerInfoActivity.this, ShopActivity.class);
                 startActivity(intent);
             }
         });

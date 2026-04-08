@@ -137,6 +137,18 @@ public class AdminPageActivity extends BaseActivity {
                 Log.e(TAG, "Failed to get users list", e);
             }
         });
+
+        databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
+            @Override
+            public void onCompleted(Map<String, Group> groupMap) {
+                userAdapter.setGroupsMap(groupMap);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Log.e(TAG, "Failed to load groups", e);
+            }
+        });
     }
 
 }

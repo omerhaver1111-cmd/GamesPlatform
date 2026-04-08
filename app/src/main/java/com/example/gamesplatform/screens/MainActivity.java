@@ -29,7 +29,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
-    Button btn_logout, play_car_btn, play_snake_btn;
+    Button btn_logout, play_car_btn, play_snake_btn, play_piano_btn;
     TextView btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop;
     TextView tv_level, tv_nick_name, tv_coins;
     ProgressBar pbar_level;
@@ -137,6 +137,14 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, SnakeGameActivity.class);
+                startActivity(intent);
+            }
+        });
+        play_piano_btn = findViewById(R.id.play_piano_button);
+        play_piano_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, RecordingActivity.class);
                 startActivity(intent);
             }
         });

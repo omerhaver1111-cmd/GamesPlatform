@@ -97,7 +97,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <TextView
             android:id="@+id/textView3"
@@ -131,7 +133,7 @@
                 android:gravity="center"
                 android:text="coin"
                 android:textColor="#D4B2DE"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/tv_main_nick_name"
@@ -153,7 +155,7 @@
                 android:gravity="center"
                 android:text="Lv"
                 android:textColor="#D4B2DE"
-                android:textSize="20sp"/>
+                android:textSize="20sp" />
 
             <ProgressBar
                 android:id="@+id/expProgressBar"
@@ -172,6 +174,15 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text=" " />
+
+            <Button
+                android:id="@+id/play_piano_button"
+                android:layout_width="210dp"
+                android:layout_height="64dp"
+                android:background="#49000000"
+                android:backgroundTint="#0D0C0C"
+                android:text="piano"
+                android:textSize="24sp" />
 
         </LinearLayout>
 

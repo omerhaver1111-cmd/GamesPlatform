@@ -67,10 +67,11 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
             holder.tvGroupName.setText(userGroup.getGroupName().trim());
             showGroup = true;
         } else {
-            holder.tvGroupName.setText("");
+            holder.tvGroupName.setText("No group");
+            holder.groupLayout.setVisibility(View.VISIBLE);
         }
 
-        holder.groupLayout.setVisibility(showGroup ? View.VISIBLE : View.GONE);
+        holder.groupLayout.setVisibility(View.VISIBLE);
         // הגדרת ראשי תיבות לאוואטר (טיפול בבטיחות סטרינגים)
         String name = user.getUsername();
         if (name != null && !name.isEmpty()) {

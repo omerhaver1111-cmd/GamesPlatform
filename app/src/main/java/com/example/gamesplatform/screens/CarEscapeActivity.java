@@ -170,6 +170,7 @@ public class CarEscapeActivity extends AppCompatActivity {
 
         private Bitmap coinBmp;
         private Bitmap obstacleBmp;
+        private Bitmap[] obstacleBmps;
 
         private int spawnCounter = 0;
 
@@ -185,6 +186,16 @@ public class CarEscapeActivity extends AppCompatActivity {
                     BitmapFactory.decodeResource(getResources(),R.drawable.car_1));
 
             coinBmp = BitmapFactory.decodeResource(getResources(),R.drawable.coin);
+
+            obstacleBmps = new Bitmap[7];
+            for(int i = 0; i < 7; i++){
+                String carName = "car_" + (i + 1);
+                int resId = getResources().getIdentifier(carName, "drawable", getContext().getPackageName());
+
+                if(resId != 0){
+                    obstacleBmps[i] = BitmapFactory.decodeResource(getResources(), resId);
+                }
+            }
             obstacleBmp = null;
 
             startTimer();
@@ -213,17 +224,10 @@ public class CarEscapeActivity extends AppCompatActivity {
                 objects.add(new Coin(x,0,coinBmp));
             }
             else
-            {   String carName = "car_"+(random.nextInt(7)+1);
-                int resId = getResources().getIdentifier(carName,"drawable",getContext().getPackageName());
+            {   int index = random.nextInt(7);
+                Bitmap selectedBmp = obstacleBmps[index];
 
-                if(resId != 0){ //לא קורס אם אין תמונה
-                    obstacleBmp = BitmapFactory.decodeResource(getResources(),resId);
-                }
-                else{
-                    obstacleBmp = null;
-                }
-
-                objects.add(new Obstacle(x,0,obstacleBmp));
+                objects.add(new Obstacle(x,0,selectedBmp));
             }
         }
 

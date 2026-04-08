@@ -378,7 +378,7 @@
         app:layout_constraintStart_toEndOf="@+id/btn_main_shop" />
 
     <Button
-        android:id="@+id/btn_main_group2"
+        android:id="@+id/btn_info_to_group"
         android:layout_width="107dp"
         android:layout_height="153dp"
         android:layout_marginBottom="4dp"

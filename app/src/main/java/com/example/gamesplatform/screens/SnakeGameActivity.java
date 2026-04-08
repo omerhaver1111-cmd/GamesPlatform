@@ -100,6 +100,7 @@ public class SnakeGameActivity extends AppCompatActivity {
             int finalRecord = record;
 
             databaseService.updateUser(currentUser.getId(), user -> {
+                if(user == null) return null;
                 user.setSnakeRecord(finalRecord);
                 user.setMoney(user.getMoney() + score);
                 return user;
@@ -202,7 +203,7 @@ public class SnakeGameActivity extends AppCompatActivity {
 
         @Override
         protected void onDraw(Canvas canvas){
-            canvas.drawColor(Color.BLACK);
+            canvas.drawColor(Color.argb(30, 0, 0, 0));
 
             paint.setColor(Color.RED);
             canvas.drawRect(food.x*grid, food.y*grid,
