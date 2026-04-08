@@ -235,7 +235,6 @@ public class MyGroupActivity extends AppCompatActivity {
 
                 final String base64 = ImageUtil.toBase64(tempImage);
 
-                // ✅ שימוש נכון ב-updateGroup עם lambda
                 databaseService.updateGroup(currentGroupId, group -> {
                     if (group == null) return null;
 
@@ -263,9 +262,13 @@ public class MyGroupActivity extends AppCompatActivity {
     }
 
     private void loadGroupBanner(Group group) {
-        if (group != null && group.getBannerImageBase64() != null) {
+        if (group != null){
+            if(group.getBannerImageBase64() != null) {
             android.graphics.Bitmap bitmap = ImageUtil.fromBase64(group.getBannerImageBase64());
-            imgBanner.setImageBitmap(bitmap);
+            imgBanner.setImageBitmap(bitmap);}
+            else{
+                imgBanner.setImageResource(R.drawable.group_banner);
+            }
         }
     }
 

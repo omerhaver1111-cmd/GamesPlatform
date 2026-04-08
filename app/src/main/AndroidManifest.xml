@@ -6,7 +6,9 @@
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <attribution android:tag="recording_tag" android:label="@string/recording_label" />
+    <attribution
+        android:label="@string/recording_label"
+        android:tag="recording_tag" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +19,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GamesPlatform">
+        <activity
+            android:name=".screens.PianoGameOverActivity"
+            android:exported="false" />
 
         <service android:name=".services.AudioService" />
 
@@ -26,7 +31,6 @@
         <activity
             android:name=".screens.PianoActivity"
             android:exported="false" />
-
         <activity
             android:name=".screens.LeaderBordActivity"
             android:exported="false" />

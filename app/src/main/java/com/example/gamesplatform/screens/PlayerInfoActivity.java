@@ -1,5 +1,7 @@
 package com.example.gamesplatform.screens;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -161,10 +163,22 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
-                Intent intent = new Intent(PlayerInfoActivity.this, LandingActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
+                new AlertDialog.Builder(PlayerInfoActivity.this)
+                        .setTitle("Logout")
+                        .setMessage("Are you sure you want to log out?")
+                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                                SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
+
+                                Intent intent = new Intent(PlayerInfoActivity.this, LandingActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .show();
 
             }
         });

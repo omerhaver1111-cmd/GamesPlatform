@@ -3,6 +3,7 @@ package com.example.gamesplatform.models;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ public class User implements Serializable {
     public int exp;
     public int carGameRecord;
     public int snakeRecord;
+    public int pianoRecord;
 
     public User() {
     }
@@ -35,8 +37,8 @@ public class User implements Serializable {
         this.money = 100;
         this.exp = 0;
         this.carGameRecord = 0;
-
-
+        this.snakeRecord = 0;
+        this.pianoRecord = 0;
     }
 
     public String getId() {
@@ -121,6 +123,14 @@ public class User implements Serializable {
 
     public void setSnakeRecord(int setSnakeRecord) {
         this.snakeRecord = setSnakeRecord;
+    }
+
+    public int getPianoRecord() {
+        return pianoRecord;
+    }
+
+    public void setPianoRecord(int setPianoRecord) {
+        this.pianoRecord = setPianoRecord;
     }
 
     public void setExp(int exp) {

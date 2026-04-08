@@ -12,7 +12,6 @@
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground">
 
-    <!-- רקע עם גרדיאנט פנימי -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,7 +19,6 @@
         android:orientation="vertical"
         android:padding="12dp">
 
-        <!-- שם השדרוג -->
         <TextView
             android:id="@+id/title"
             android:layout_width="match_parent"
@@ -32,7 +30,6 @@
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <!-- תיאור קצר -->
         <TextView
             android:id="@+id/desc"
             android:layout_width="match_parent"
@@ -43,7 +40,6 @@
             android:textColor="#CCCCCC"
             android:textSize="12sp" />
 
-        <!-- כפתור קנייה -->
         <Button
             android:id="@+id/buyBtn"
             android:layout_width="match_parent"

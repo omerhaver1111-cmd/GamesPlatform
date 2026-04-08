@@ -2,6 +2,7 @@ package com.example.gamesplatform.services;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.os.Binder;
@@ -104,23 +105,30 @@ public class AudioService extends Service {
     }
 
     public void playPianoNote() {
-        stopPlayback();
-        player = new MediaPlayer();
+        // יוצרים נגן חדש לכל לחיצה כדי שהצלילים יוכלו להישמע יחד
+        final MediaPlayer mp = new MediaPlayer();
         try {
-            File userFile = new File(fileName);
-            if (userFile.exists() && userFile.length() > 0) {
-                player.setDataSource(fileName);
+            File file = new File(fileName);
+            if (file.exists()) {
+                mp.setDataSource(fileName);
             } else {
-                // אם אין הקלטה, נשתמש בצליל ברירת המחדל
-                android.content.res.AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.default_sound);
-                if (afd == null) return;
-                player.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
+                // אם אין קובץ, נגן את צליל ברירת המחדל
+                AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.default_sound);
+                mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 afd.close();
             }
 
-            player.setOnPreparedListener(MediaPlayer::start);
-            player.prepareAsync();
-        } catch (IOException e) {
+            mp.prepare();
+            mp.start();
+
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mediaPlayer) {
+                    mediaPlayer.release();
+                }
+            });
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

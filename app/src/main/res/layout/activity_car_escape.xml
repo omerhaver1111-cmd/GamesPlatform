@@ -9,7 +9,6 @@
     android:backgroundTint="#524D4D"
     tools:context=".screens.CarEscapeActivity">
 
-    <!-- כאן יכנס המשחק מהקוד -->
 
     <TextView
         android:id="@+id/timer_text_view"

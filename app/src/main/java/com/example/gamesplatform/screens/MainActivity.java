@@ -21,8 +21,6 @@ import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
-import com.example.gamesplatform.services.DatabaseService;
-
 import java.util.Map;
 
 
@@ -34,6 +32,11 @@ public class MainActivity extends AppCompatActivity {
     TextView tv_level, tv_nick_name, tv_coins;
     ProgressBar pbar_level;
     private DatabaseService databaseService;
+    private int currentLevel = 1;
+
+    private final int CAR_LEVEL = 1;
+    private final int SNAKE_LEVEL = 3;
+    private final int PIANO_LEVEL = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,7 +127,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        play_car_btn = findViewById(R.id.play_button);
+        play_car_btn = findViewById(R.id.play_car_button);
         play_car_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -136,6 +139,10 @@ public class MainActivity extends AppCompatActivity {
         play_snake_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (currentLevel < SNAKE_LEVEL) {
+                    Toast.makeText(MainActivity.this, "level needed " + SNAKE_LEVEL, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this, SnakeGameActivity.class);
                 startActivity(intent);
             }
@@ -144,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
         play_piano_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (currentLevel < PIANO_LEVEL) {
+                    Toast.makeText(MainActivity.this, "level needed " + PIANO_LEVEL, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Intent intent = new Intent(MainActivity.this, RecordingActivity.class);
                 startActivity(intent);
             }
@@ -163,7 +174,6 @@ public class MainActivity extends AppCompatActivity {
         }
 
         String uid = currentUser.getId();
-
         databaseService.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
@@ -171,21 +181,45 @@ public class MainActivity extends AppCompatActivity {
                     if (user.getNickname() != null) {
                         tv_nick_name.setText(user.getNickname());
                     }
-                    int level = User.levelCalculate(user.getExp());
-                    tv_level.setText(String.valueOf("Lv."+level));
+                    currentLevel = User.levelCalculate(user.getExp());
+                    tv_level.setText(String.valueOf("Lv. "+ currentLevel));
 
                     int remainingExp = User.getRemainingExp(user.getExp());
                     pbar_level.setProgress(remainingExp);
 
                     tv_coins.setText(user.getMoney()+"c");
-                }
 
+                    updateGameAccess();
+                }
             }
 
             @Override
             public void onFailed(Exception e) {
-                Log.e(TAG, "Error getting user profile", e);
-            }
+                Log.e(TAG, "Error getting user profile", e);}
         });
+    }
+    private void updateGameAccess() {
+
+        // Snake
+        if (currentLevel < SNAKE_LEVEL) {
+            play_snake_btn.setEnabled(false);
+            play_snake_btn.setText("🔒 Snake (Lv." + SNAKE_LEVEL + ")");
+            play_snake_btn.setAlpha(0.5f);
+        } else {
+            play_snake_btn.setEnabled(true);
+            play_snake_btn.setText("Snake");
+            play_snake_btn.setAlpha(1f);
+        }
+
+        // Piano
+        if (currentLevel < PIANO_LEVEL) {
+            play_piano_btn.setEnabled(false);
+            play_piano_btn.setText("🔒 Piano (Lv." + PIANO_LEVEL + ")");
+            play_piano_btn.setAlpha(0.5f);
+        } else {
+            play_piano_btn.setEnabled(true);
+            play_piano_btn.setText("Piano");
+            play_piano_btn.setAlpha(1f);
+        }
     }
 }
