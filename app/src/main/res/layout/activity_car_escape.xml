@@ -39,60 +39,60 @@
         android:id="@+id/game_over_layout"
         android:layout_width="250dp"
         android:layout_height="300dp"
-        android:orientation="vertical"
-        android:gravity="center"
         android:background="#AA000000"
+        android:gravity="center"
+        android:orientation="vertical"
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@id/game_container"
         app:layout_constraintBottom_toBottomOf="@id/game_container"
+        app:layout_constraintEnd_toEndOf="@id/game_container"
         app:layout_constraintStart_toStartOf="@id/game_container"
-        app:layout_constraintEnd_toEndOf="@id/game_container">
+        app:layout_constraintTop_toTopOf="@id/game_container">
 
         <TextView
             android:id="@+id/game_over_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
             android:text="GAME OVER"
             android:textColor="#FFFFFF"
-            android:textSize="24sp"
-            android:layout_margin="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/time_text"
-            android:text="Time"
-            android:textColor="#FFFFFF"
-            android:layout_margin="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Time"
+            android:textColor="#FFFFFF" />
 
         <!-- ✅ הוספה -->
         <TextView
             android:id="@+id/coins_text"
-            android:text="Coins"
-            android:textColor="#FFFFFF"
-            android:layout_margin="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Coins"
+            android:textColor="#FFFFFF" />
 
         <TextView
             android:id="@+id/record_text"
-            android:text="Record"
-            android:textColor="#FFFFFF"
-            android:layout_margin="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:text="Record"
+            android:textColor="#FFFFFF" />
 
         <Button
             android:id="@+id/restart_btn"
-            android:text="Play Again"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Play Again" />
 
         <Button
             android:id="@+id/home_btn"
-            android:text="Home"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:text="Home" />
 
     </LinearLayout>
 

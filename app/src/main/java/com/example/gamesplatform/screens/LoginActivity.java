@@ -5,11 +5,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -21,12 +18,12 @@ import com.example.gamesplatform.utils.SharedPreferencesUtil;
 import com.example.gamesplatform.utils.Validator;
 import com.google.android.material.textfield.TextInputLayout;
 
-public class LoginActivity extends BaseActivity implements View.OnClickListener{
+public class LoginActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
-
+    Button btnRegister;
     private TextInputLayout etEmail, etPassword;
     private Button btnLogin;
-    Button btnRegister;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,10 +50,10 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             }
 
         });
-        /// set the click listener
         btnLogin.setOnClickListener(this);
 
     }
+
     public void onClick(View v) {
         if (v.getId() == btnLogin.getId()) {
             Log.d(TAG, "onClick: Login button clicked");
@@ -84,6 +81,7 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
 
     /// Method to check if the input is valid
     /// It checks if the email and password are valid
+    ///
     /// @see Validator#isEmailValid(String)
     /// @see Validator#isPasswordValid(String)
     private boolean checkInput(String email, String password) {
@@ -114,14 +112,22 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener{
             /// @param user the user object that is logged in
             @Override
             public void onCompleted(User user) {
-                Log.d(TAG, "onCompleted: User logged in: " + user.toString());
-                /// save the user data to shared preferences
-                SharedPreferencesUtil.saveUser(LoginActivity.this, user);
-                /// Redirect to main activity and clear back stack to prevent user from going back to login screen
-                Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
-                /// Clear the back stack (clear history) and start the MainActivity
-                mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(mainIntent);
+                if (user != null) {
+                    Log.d(TAG, "onCompleted: User logged in: " + user.toString());
+                    /// save the user data to shared preferences
+                    SharedPreferencesUtil.saveUser(LoginActivity.this, user);
+                    /// Redirect to main activity and clear back stack to prevent user from going back to login screen
+                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    /// Clear the back stack (clear history) and start the MainActivity
+                    mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(mainIntent);
+                }
+                else {
+                    Log.e(TAG, "onCompleted: User object is null");
+                    etPassword.setError("User not found or incorrect credentials");
+                    etPassword.requestFocus();
+                }
+
             }
 
             @Override

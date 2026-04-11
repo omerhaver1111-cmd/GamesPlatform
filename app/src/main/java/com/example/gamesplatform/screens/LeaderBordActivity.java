@@ -14,16 +14,23 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.gamesplatform.R;
+import com.example.gamesplatform.adapters.UsersLeaderBordAdapter;
 import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 public class LeaderBordActivity extends AppCompatActivity {
+    RecyclerView carRecycler, snakeRecycler, pianoRecycler;
+    UsersLeaderBordAdapter carAdapter, snakeAdapter, pianoAdapter;
     private GestureDetector gestureDetector;
     private DatabaseService databaseService;
 
@@ -38,6 +45,24 @@ public class LeaderBordActivity extends AppCompatActivity {
             return insets;
         });
         databaseService = new DatabaseService();
+
+        carRecycler = findViewById(R.id.recycler_car);
+        snakeRecycler = findViewById(R.id.recycler_snake);
+        pianoRecycler = findViewById(R.id.recycler_piano);
+
+        carRecycler.setLayoutManager(new LinearLayoutManager(this));
+        snakeRecycler.setLayoutManager(new LinearLayoutManager(this));
+        pianoRecycler.setLayoutManager(new LinearLayoutManager(this));
+
+        carAdapter = new UsersLeaderBordAdapter("car");
+        snakeAdapter = new UsersLeaderBordAdapter("snake");
+        pianoAdapter = new UsersLeaderBordAdapter("piano");
+
+        carRecycler.setAdapter(carAdapter);
+        snakeRecycler.setAdapter(snakeAdapter);
+        pianoRecycler.setAdapter(pianoAdapter);
+
+        loadLeaderboards();
 
         gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
 
@@ -79,6 +104,7 @@ public class LeaderBordActivity extends AppCompatActivity {
                                         startActivity(intent);
                                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                                     }
+
                                     @Override
                                     public void onFailed(Exception e) {
                                         Toast.makeText(LeaderBordActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
@@ -86,8 +112,6 @@ public class LeaderBordActivity extends AppCompatActivity {
                                         Intent intent = new Intent(LeaderBordActivity.this, MainActivity.class);
                                         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                                         startActivity(intent);
-
-
 
                                     }
                                 });
@@ -99,13 +123,47 @@ public class LeaderBordActivity extends AppCompatActivity {
                         return true;
                     }
                 }
-
                 return false;
             }
         });
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event);
+    }
+
+    private List<User> getTop10(List<User> users, Comparator<User> comparator) {
+        return users.stream()
+                .sorted(comparator)
+                .limit(10)
+                .collect(java.util.stream.Collectors.toList());
+    }
+
+    private void loadLeaderboards() {
+        databaseService.getUserList(new DatabaseService.DatabaseCallback<List<User>>() {
+
+            @Override
+            public void onCompleted(List<User> users) {
+
+                List<User> topCar = getTop10(users,
+                        (u1, u2) -> Integer.compare(u2.carGameRecord, u1.carGameRecord));
+
+                List<User> topSnake = getTop10(users,
+                        (u1, u2) -> Integer.compare(u2.snakeRecord, u1.snakeRecord));
+
+                List<User> topPiano = getTop10(users,
+                        (u1, u2) -> Integer.compare(u2.pianoRecord, u1.pianoRecord));
+
+                carAdapter.setUsers(topCar);
+                snakeAdapter.setUsers(topSnake);
+                pianoAdapter.setUsers(topPiano);
+            }
+
+            @Override
+            public void onFailed(Exception e) {
+                Toast.makeText(LeaderBordActivity.this, "שגיאה", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

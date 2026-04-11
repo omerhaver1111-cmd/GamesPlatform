@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -65,6 +64,7 @@ public class MyGroupActivity extends AppCompatActivity {
         });
 
         databaseService = DatabaseService.getInstance();
+
 
         Intent intent = getIntent();
         currentGroupId = intent.getStringExtra("GROUP_ID");
@@ -211,7 +211,8 @@ public class MyGroupActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onFailed(Exception e) {}
+                public void onFailed(Exception e) {
+                }
             });
         });
     }
@@ -262,11 +263,11 @@ public class MyGroupActivity extends AppCompatActivity {
     }
 
     private void loadGroupBanner(Group group) {
-        if (group != null){
-            if(group.getBannerImageBase64() != null) {
-            android.graphics.Bitmap bitmap = ImageUtil.fromBase64(group.getBannerImageBase64());
-            imgBanner.setImageBitmap(bitmap);}
-            else{
+        if (group != null) {
+            if (group.getBannerImageBase64() != null) {
+                android.graphics.Bitmap bitmap = ImageUtil.fromBase64(group.getBannerImageBase64());
+                imgBanner.setImageBitmap(bitmap);
+            } else {
                 imgBanner.setImageResource(R.drawable.group_banner);
             }
         }
@@ -337,5 +338,7 @@ public class MyGroupActivity extends AppCompatActivity {
                 Log.e(TAG, "Failed to get group", e);
             }
         });
+
+
     }
 }

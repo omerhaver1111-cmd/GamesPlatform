@@ -4,11 +4,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.gamesplatform.R;
+import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
-import com.example.gamesplatform.models.Group; // וודאי שיש לך מודל כזה
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,10 +22,6 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     private List<User> users = new ArrayList<>();
     private Map<String, Group> groupsMap = new HashMap<>();
     private OnUserClickListener listener;
-
-    public interface OnUserClickListener {
-        void onUserClick(User user);
-    }
 
     public UsersAdapter(OnUserClickListener listener) {
         this.listener = listener;
@@ -101,6 +100,10 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     @Override
     public int getItemCount() {
         return users.size();
+    }
+
+    public interface OnUserClickListener {
+        void onUserClick(User user);
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {

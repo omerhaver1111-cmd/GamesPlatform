@@ -4,9 +4,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.gamesplatform.R;
 import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
@@ -148,10 +150,6 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
     private final List<User> users = new ArrayList<>();
     private final OnGroupListener groupListener;
 
-    public interface OnGroupListener {
-        public void onClick(Group group);
-    }
-
     public GroupsAdapter(@NonNull OnGroupListener groupListener) {
         this.groupListener = groupListener;
     }
@@ -167,7 +165,6 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
         users.addAll(userList);
         notifyDataSetChanged();
     }
-
 
     @NonNull
     @Override
@@ -215,6 +212,10 @@ public class GroupsAdapter extends RecyclerView.Adapter<GroupsAdapter.GroupViewH
                 return user;
         }
         return null;
+    }
+
+    public interface OnGroupListener {
+        public void onClick(Group group);
     }
 
     public static class GroupViewHolder extends RecyclerView.ViewHolder {

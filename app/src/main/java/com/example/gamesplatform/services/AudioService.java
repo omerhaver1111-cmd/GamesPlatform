@@ -12,17 +12,12 @@ import com.example.gamesplatform.R;
 
 import java.io.File;
 import java.io.IOException;
+
 public class AudioService extends Service {
     private final IBinder binder = new AudioBinder();
     private MediaRecorder recorder;
     private MediaPlayer player;
     private String fileName;
-
-    public class AudioBinder extends Binder {
-        public AudioService getService() {
-            return AudioService.this;
-        }
-    }
 
     @Override
     public void onCreate() {
@@ -98,7 +93,9 @@ public class AudioService extends Service {
                 if (player.isPlaying()) {
                     player.stop();
                 }
-            } catch (Exception e) { e.printStackTrace(); }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             player.release();
             player = null;
         }
@@ -138,6 +135,12 @@ public class AudioService extends Service {
         super.onDestroy();
         stopRecording();
         stopPlayback();
+    }
+
+    public class AudioBinder extends Binder {
+        public AudioService getService() {
+            return AudioService.this;
+        }
     }
 
 

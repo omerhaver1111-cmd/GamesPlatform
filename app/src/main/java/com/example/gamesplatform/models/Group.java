@@ -20,7 +20,7 @@ public class Group implements Serializable {
         members = new HashMap<>();
     }
 
-    public Group(String groupName,String leaderId ) {
+    public Group(String groupName, String leaderId) {
         this.leaderId = leaderId;
         this.groupName = groupName;
         this.id = groupName;

@@ -9,20 +9,6 @@
     android:backgroundTint="#12003F"
     tools:context=".screens.LoginActivity">
 
-    <Button
-        android:id="@+id/btn_login_register"
-        android:layout_width="165dp"
-        android:layout_height="44dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="20dp"
-        android:backgroundTint="#AE08FD"
-        android:text="return"
-        app:layout_constraintBottom_toTopOf="@+id/imageView2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
-        app:layout_constraintVertical_bias="1.0" />
-
     <ImageView
         android:id="@+id/imageView2"
         android:layout_width="450dp"
@@ -109,15 +95,15 @@
                 android:textColor="#F4ECEC" />
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <EditText-->
-<!--            android:id="@+id/et_login_email"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="10"-->
-<!--            android:ems="10"-->
-<!--            android:inputType="textEmailAddress"-->
-<!--            android:text="email"-->
-<!--            android:textColor="#F4ECEC" />-->
+        <!--        <EditText-->
+        <!--            android:id="@+id/et_login_email"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_weight="10"-->
+        <!--            android:ems="10"-->
+        <!--            android:inputType="textEmailAddress"-->
+        <!--            android:text="email"-->
+        <!--            android:textColor="#F4ECEC" />-->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/et_login_password"
             android:layout_width="match_parent"
@@ -135,14 +121,14 @@
                 android:textColor="#F4ECEC" />
         </com.google.android.material.textfield.TextInputLayout>
 
-<!--        <EditText-->
-<!--            android:id="@+id/et_login_password"-->
-<!--            android:layout_width="match_parent"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_weight="10"-->
-<!--            android:ems="10"-->
-<!--            android:inputType="textPassword"-->
-<!--            android:textColor="#FAF7F7" />-->
+        <!--        <EditText-->
+        <!--            android:id="@+id/et_login_password"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_weight="10"-->
+        <!--            android:ems="10"-->
+        <!--            android:inputType="textPassword"-->
+        <!--            android:textColor="#FAF7F7" />-->
 
     </LinearLayout>
 

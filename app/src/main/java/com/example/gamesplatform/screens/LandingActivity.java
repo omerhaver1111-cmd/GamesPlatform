@@ -18,6 +18,7 @@ public class LandingActivity extends AppCompatActivity {
 
     Button toReg;
     Button toLog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

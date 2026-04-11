@@ -35,19 +35,15 @@ public class PianoGameView extends View {
     // ✅ listener
     private GameOverListener gameOverListener;
 
-    public interface GameOverListener {
-        void onGameOver(int score);
-    }
-
-    public void setGameOverListener(GameOverListener listener) {
-        this.gameOverListener = listener;
-    }
-
     public PianoGameView(Context context, AudioService service) {
         super(context);
         this.audioService = service;
         initPaints();
         startGame();
+    }
+
+    public void setGameOverListener(GameOverListener listener) {
+        this.gameOverListener = listener;
     }
 
     private void initPaints() {
@@ -211,5 +207,9 @@ public class PianoGameView extends View {
         }
 
         return true;
+    }
+
+    public interface GameOverListener {
+        void onGameOver(int score);
     }
 }

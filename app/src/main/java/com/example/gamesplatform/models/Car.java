@@ -2,7 +2,6 @@ package com.example.gamesplatform.models;
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.Rect;
 
 public class Car {
@@ -10,7 +9,8 @@ public class Car {
     private Bitmap carIcon;
 
     public Car(int screenWidth, int screenHeight, Bitmap originalBitmap) {
-        width = 140; height = 240; // גודל המכונית
+        width = 140;
+        height = 240; // גודל המכונית
         x = screenWidth / 2 - width / 2;
         y = screenHeight - height - 50;
         // יצירת גרסה מוקטנת של התמונה לגודל שקבענו

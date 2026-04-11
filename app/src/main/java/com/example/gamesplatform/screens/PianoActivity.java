@@ -20,28 +20,21 @@ import com.example.gamesplatform.R;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.AudioService;
 import com.example.gamesplatform.services.DatabaseService;
-import com.example.gamesplatform.views.PianoGameView;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
+import com.example.gamesplatform.views.PianoGameView;
 
 public class PianoActivity extends AppCompatActivity {
 
+    private static final String TAG = "PianoActivity";
     private AudioService audioService;
     private boolean isBound = false;
-
     private FrameLayout gameContainer;
     private LinearLayout gameOverLayout;
-
     private TextView scoreText, recordText;
     private Button restartBtn, goMainBtn, goRecordingBtn;
-
     private PianoGameView gameView;
-
     private User currentUser;
     private DatabaseService databaseService;
-
-    private static final String TAG = "PianoActivity";
-
-
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -209,4 +202,5 @@ public class PianoActivity extends AppCompatActivity {
             isBound = false;
         }
     }
+
 }

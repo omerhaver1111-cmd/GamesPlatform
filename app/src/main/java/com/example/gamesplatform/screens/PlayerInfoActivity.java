@@ -2,15 +2,8 @@ package com.example.gamesplatform.screens;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import com.example.gamesplatform.R;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +11,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import com.example.gamesplatform.R;
 import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
@@ -30,12 +29,12 @@ import java.util.function.UnaryOperator;
 public class PlayerInfoActivity extends BaseActivity implements View.OnClickListener {
 
     private static final String TAG = "PlayerInfoActivity";
-    private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPassword;
-    private TextView tvUserDisplayEmail, btn_to_player_info,btn_to_group, btn_to_main, tv_username,tv_nick_name,tv_level,tv_money;
-    private Button btnUpdateProfile, btn_logout, btn_to_admin_page, btn_to_shop;
     String selectedUid;
     User selectedUser;
     boolean isCurrentUser = false;
+    private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPassword;
+    private TextView tvUserDisplayEmail, btn_to_player_info, btn_to_group, btn_to_main, tv_username, tv_nick_name, tv_level, tv_money;
+    private Button btnUpdateProfile, btn_logout, btn_to_admin_page, btn_to_shop;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +75,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         set_tv(tv_username, tv_nick_name, tv_level, tv_money);
 
         btn_to_admin_page = findViewById(R.id.btn_player_profile_to_admin_page);
-        if(currentUser.isAdmin){
+        if (currentUser.isAdmin) {
             btn_to_admin_page.setVisibility(View.VISIBLE);
         } else {
             btn_to_admin_page.setVisibility(View.GONE);
@@ -137,14 +136,14 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                             intent.putExtra("GROUP_ID", group.getGroupId());
                             startActivity(intent);
                         }
+
                         @Override
                         public void onFailed(Exception e) {
                             Toast.makeText(PlayerInfoActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "getGroupMap failed", e);
                         }
                     });
-                }
-                else{
+                } else {
                     Intent intent = new Intent(PlayerInfoActivity.this, GroupsActivity.class);
                     startActivity(intent);
                 }
@@ -204,6 +203,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 tvLevel.setText(String.valueOf(user.getExp()));
                 tvMoney.setText(String.valueOf(user.getMoney()));
             }
+
             @Override
             public void onFailed(Exception e) {
                 Log.e(TAG, "Error getting user profile", e);
@@ -213,7 +213,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        if(v.getId() == R.id.btn_edit_profile) {
+        if (v.getId() == R.id.btn_edit_profile) {
             updateUserProfile();
             return;
         }
@@ -287,11 +287,9 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             Log.e(TAG, "Only the current user can update their profile");
             Toast.makeText(this, "You can only update your own profile", Toast.LENGTH_SHORT).show();
             return;
-        }
-        else if (isCurrentUser) {
+        } else if (isCurrentUser) {
             updateUserInDatabase(selectedUser);
-        }
-        else if (selectedUser.isAdmin()) {
+        } else if (selectedUser.isAdmin()) {
             // update the user in the database
             updateUserInDatabase(selectedUser);
         }

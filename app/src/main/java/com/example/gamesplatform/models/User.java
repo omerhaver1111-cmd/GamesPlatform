@@ -3,8 +3,6 @@ package com.example.gamesplatform.models;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class User implements Serializable {
@@ -39,6 +37,19 @@ public class User implements Serializable {
         this.carGameRecord = 0;
         this.snakeRecord = 0;
         this.pianoRecord = 0;
+    }
+
+    public static int levelCalculate(long xp) {
+        // Level = 0.2 * sqrt(XP)
+        int level = (int) Math.floor(0.2 * Math.sqrt(xp));
+        return Math.max(1, level);
+    }
+
+    public static int getRemainingExp(int xp) {
+        int currentLevel = levelCalculate(xp);
+        // חישוב כמות הexp עבור הרמה
+        int xpAtLevel = (int) Math.pow(currentLevel / 0.2, 2);
+        return xp - xpAtLevel;
     }
 
     public String getId() {
@@ -81,12 +92,8 @@ public class User implements Serializable {
         this.password = password;
     }
 
-    public boolean getInGroup(){
-        return  this.inGroup;
-    }
-
-    public void setInGroup(boolean ing){
-        this.inGroup = ing;
+    public boolean getInGroup() {
+        return this.inGroup;
     }
 
     public boolean isAdmin() {
@@ -107,6 +114,10 @@ public class User implements Serializable {
 
     public int getExp() {
         return exp;
+    }
+
+    public void setExp(int exp) {
+        this.exp = exp;
     }
 
     public int getCarGameRecord() {
@@ -133,13 +144,13 @@ public class User implements Serializable {
         this.pianoRecord = setPianoRecord;
     }
 
-    public void setExp(int exp) {
-        this.exp = exp;
-    }
-
     @Exclude
     public boolean isInGroup() {
         return inGroup;
+    }
+
+    public void setInGroup(boolean ing) {
+        this.inGroup = ing;
     }
 
     public Group getMyGroup(Map<String, Group> groupsMap) {
@@ -154,19 +165,6 @@ public class User implements Serializable {
         return null;
     }
 
-    public static int levelCalculate(long xp) {
-        // Level = 0.2 * sqrt(XP)
-        int level = (int) Math.floor(0.2 * Math.sqrt(xp));
-        return Math.max(1, level);
-    }
-
-    public static int getRemainingExp(int xp) {
-        int currentLevel = levelCalculate(xp);
-        // חישוב כמות הexp עבור הרמה
-        int xpAtLevel = (int) Math.pow(currentLevel / 0.2, 2);
-        return xp - xpAtLevel;
-    }
-
     @Override
     public String toString() {
         return "User{" +
@@ -179,10 +177,6 @@ public class User implements Serializable {
                 ", exp=" + exp +
                 '}';
     }
-
-
-
-
 
 
 }

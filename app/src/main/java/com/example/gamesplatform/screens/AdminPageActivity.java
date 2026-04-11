@@ -9,7 +9,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -31,6 +30,7 @@ public class AdminPageActivity extends BaseActivity {
     private UsersAdapter userAdapter;
     private TextView tvUserCount;
     private Button btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,14 +97,14 @@ public class AdminPageActivity extends BaseActivity {
                             intent.putExtra("GROUP_ID", group.getGroupId());
                             startActivity(intent);
                         }
+
                         @Override
                         public void onFailed(Exception e) {
                             Toast.makeText(AdminPageActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "getGroupMap failed", e);
                         }
                     });
-                }
-                else{
+                } else {
                     Intent intent = new Intent(AdminPageActivity.this, GroupsActivity.class);
                     startActivity(intent);
                 }

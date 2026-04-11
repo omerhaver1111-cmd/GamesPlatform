@@ -35,22 +35,22 @@ public class Obstacle extends GameObject {
 
     private int damage = 1;
 
-    public Obstacle(int x,int y,Bitmap bmp){
-        super(x,y,140,240,12,bmp);
+    public Obstacle(int x, int y, Bitmap bmp) {
+        super(x, y, 140, 240, 12, bmp);
     }
 
-    public int getDamage(){
+    public int getDamage() {
         return damage;
     }
 
     @Override
-    protected void drawFallback(Canvas canvas){
+    protected void drawFallback(Canvas canvas) {
         paint.setColor(Color.RED);
-        canvas.drawRect(x,y,x+width,y+height,paint);
+        canvas.drawRect(x, y, x + width, y + height, paint);
     }
 
     @Override
-    public void onCollision(){
+    public void onCollision() {
         active = false;
     }
 }

@@ -1,4 +1,5 @@
 package com.example.gamesplatform.screens;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;

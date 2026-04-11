@@ -1,10 +1,11 @@
 package com.example.gamesplatform.screens;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.BitmapFactory;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.CountDownTimer;
@@ -23,14 +24,13 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
 import com.example.gamesplatform.models.Car;
-import com.example.gamesplatform.models.GameObject;
 import com.example.gamesplatform.models.Coin;
+import com.example.gamesplatform.models.GameObject;
 import com.example.gamesplatform.models.Obstacle;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
-import android.graphics.Bitmap;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -90,25 +90,27 @@ public class CarEscapeActivity extends AppCompatActivity {
         });
     }
 
-    private void loadUser(){
+    private void loadUser() {
         User savedUser = SharedPreferencesUtil.getUser(this);
-        if(savedUser == null) return;
+        if (savedUser == null) return;
 
         databaseService.getUser(savedUser.getId(), new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
-                if(user != null) currentUser = user;
+                if (user != null) currentUser = user;
             }
+
             @Override
-            public void onFailed(Exception e) {}
+            public void onFailed(Exception e) {
+            }
         });
     }
 
-    public void showGameOver(int time,int coins){
+    public void showGameOver(int time, int coins) {
 
         game_over_layout.setVisibility(View.VISIBLE);
 
-        if(currentUser == null){
+        if (currentUser == null) {
             time_text.setText("Time: " + time + " sec");
             record_text.setText("Coins: " + coins);
             return;
@@ -117,16 +119,15 @@ public class CarEscapeActivity extends AppCompatActivity {
         int record = currentUser.getCarGameRecord();
         boolean isNewRecord = false;
 
-        if(time > record){
+        if (time > record) {
             record = time;
             isNewRecord = true;
         }
 
-        if(isNewRecord){
+        if (isNewRecord) {
             time_text.setText("NEW RECORD! " + time + " sec");
             time_text.setTextColor(Color.GREEN);
-        }
-        else{
+        } else {
             time_text.setText("Time: " + time + " sec");
         }
         record_text.setText("Record: " + record);
@@ -136,10 +137,10 @@ public class CarEscapeActivity extends AppCompatActivity {
 
         databaseService.updateUser(currentUser.getId(), user -> {
 
-            if(user == null) return null;
+            if (user == null) return null;
 
             int newMoney = user.getMoney() + coins;
-            int newexp = user.getExp() + (time - time %10);
+            int newexp = user.getExp() + (time - time % 10);
 
             user.setMoney(newMoney);
             user.setExp(newexp);
@@ -174,7 +175,7 @@ public class CarEscapeActivity extends AppCompatActivity {
 
         private int spawnCounter = 0;
 
-        public GameView(Context context,int width,int height,TextView timerView) {
+        public GameView(Context context, int width, int height, TextView timerView) {
             super(context);
             this.screenWidth = width;
             this.screenHeight = height;
@@ -182,17 +183,17 @@ public class CarEscapeActivity extends AppCompatActivity {
 
             paint = new Paint();
 
-            car = new Car(screenWidth,screenHeight,
-                    BitmapFactory.decodeResource(getResources(),R.drawable.car_1));
+            car = new Car(screenWidth, screenHeight,
+                    BitmapFactory.decodeResource(getResources(), R.drawable.car_1));
 
-            coinBmp = BitmapFactory.decodeResource(getResources(),R.drawable.coin);
+            coinBmp = BitmapFactory.decodeResource(getResources(), R.drawable.coin);
 
             obstacleBmps = new Bitmap[7];
-            for(int i = 0; i < 7; i++){
+            for (int i = 0; i < 7; i++) {
                 String carName = "car_" + (i + 1);
                 int resId = getResources().getIdentifier(carName, "drawable", getContext().getPackageName());
 
-                if(resId != 0){
+                if (resId != 0) {
                     obstacleBmps[i] = BitmapFactory.decodeResource(getResources(), resId);
                 }
             }
@@ -202,70 +203,71 @@ public class CarEscapeActivity extends AppCompatActivity {
         }
 
         private void startTimer() {
-            timer = new CountDownTimer(Long.MAX_VALUE,1000) {
+            timer = new CountDownTimer(Long.MAX_VALUE, 1000) {
                 @Override
                 public void onTick(long millisUntilFinished) {
                     seconds++;
                     int min = seconds / 60;
                     int sec = seconds % 60;
-                    timerView.setText(String.format("%02d:%02d",min,sec));
+                    timerView.setText(String.format("%02d:%02d", min, sec));
                 }
+
                 @Override
-                public void onFinish() {}
+                public void onFinish() {
+                }
             };
             timer.start();
         }
 
-        private void spawnObject(){
+        private void spawnObject() {
             int x = random.nextInt(screenWidth - 150);
             int r = random.nextInt(4);
 
-            if(r == 0){
-                objects.add(new Coin(x,0,coinBmp));
-            }
-            else
-            {   int index = random.nextInt(7);
+            if (r == 0) {
+                objects.add(new Coin(x, 0, coinBmp));
+            } else {
+                int index = random.nextInt(7);
                 Bitmap selectedBmp = obstacleBmps[index];
 
-                objects.add(new Obstacle(x,0,selectedBmp));
+                objects.add(new Obstacle(x, 0, selectedBmp));
             }
         }
 
-        private void update(){
-            if(gameOver) return;
+        private void update() {
+            if (gameOver) return;
 
             spawnCounter++;
 
-            if(spawnCounter > 40){
+            if (spawnCounter > 40) {
                 spawnObject();
                 spawnCounter = 0;
             }
 
-            for(int i=0; i < objects.size(); i++){
+            for (int i = 0; i < objects.size(); i++) {
                 GameObject obj = objects.get(i);
                 obj.update();
 
-                if(Rect.intersects(obj.getRect(), car.getRect())){
+                if (Rect.intersects(obj.getRect(), car.getRect())) {
 
-                    if(obj instanceof Coin){
+                    if (obj instanceof Coin) {
                         coins++;
                     }
 
-                    if(obj instanceof Obstacle){
+                    if (obj instanceof Obstacle) {
                         lives--;
                     }
 
                     obj.deactivate();
 
-                    if(lives <= 0){
+                    if (lives <= 0) {
                         gameOver = true;
                         timer.cancel();
-                        ((CarEscapeActivity)getContext()).showGameOver(seconds,coins);
+                        ((CarEscapeActivity) getContext()).showGameOver(seconds, coins);
                         return;
                     }
                 }
 
-                if(!obj.isActive()){
+                if (!obj.isActive()) {
                     objects.remove(i);
                     i--;
                 }
@@ -282,33 +284,33 @@ public class CarEscapeActivity extends AppCompatActivity {
 
             car.draw(canvas);
 
-            for(int i=0;i<objects.size();i++){
+            for (int i = 0; i < objects.size(); i++) {
                 objects.get(i).draw(canvas);
             }
 
             drawUI(canvas);
 
-            if(!gameOver){
+            if (!gameOver) {
                 invalidate();
             }
         }
 
-        private void drawUI(Canvas canvas){
+        private void drawUI(Canvas canvas) {
             paint.setColor(Color.WHITE);
             paint.setTextSize(50);
 
-            canvas.drawText("Lives: " + lives,20,60,paint);
-            canvas.drawText("Coins: " + coins,20,120,paint);
+            canvas.drawText("Lives: " + lives, 20, 60, paint);
+            canvas.drawText("Coins: " + coins, 20, 120, paint);
 
-            if(currentUser != null){
-                canvas.drawText("Money: " + currentUser.getMoney(),20,180,paint);
+            if (currentUser != null) {
+                canvas.drawText("Money: " + currentUser.getMoney(), 20, 180, paint);
             }
         }
 
         @Override
         public boolean onTouchEvent(MotionEvent event) {
-            if(event.getAction()==MotionEvent.ACTION_MOVE){
-                car.move((int)event.getX(),screenWidth);
+            if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                car.move((int) event.getX(), screenWidth);
             }
             return true;
         }

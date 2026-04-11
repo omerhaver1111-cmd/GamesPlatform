@@ -26,17 +26,15 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
-
+    private final int CAR_LEVEL = 1;
+    private final int SNAKE_LEVEL = 3;
+    private final int PIANO_LEVEL = 5;
     Button btn_logout, play_car_btn, play_snake_btn, play_piano_btn;
     TextView btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop;
     TextView tv_level, tv_nick_name, tv_coins;
     ProgressBar pbar_level;
     private DatabaseService databaseService;
     private int currentLevel = 1;
-
-    private final int CAR_LEVEL = 1;
-    private final int SNAKE_LEVEL = 3;
-    private final int PIANO_LEVEL = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,14 +102,14 @@ public class MainActivity extends AppCompatActivity {
                             intent.putExtra("GROUP_ID", group.getGroupId());
                             startActivity(intent);
                         }
+
                         @Override
                         public void onFailed(Exception e) {
                             Toast.makeText(MainActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
                             Log.e(TAG, "getGroupMap failed", e);
                         }
                     });
-                }
-                else{
+                } else {
                     Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
                     startActivity(intent);
                 }
@@ -177,17 +175,17 @@ public class MainActivity extends AppCompatActivity {
         databaseService.getUser(uid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
-                if (user != null){
+                if (user != null) {
                     if (user.getNickname() != null) {
                         tv_nick_name.setText(user.getNickname());
                     }
                     currentLevel = User.levelCalculate(user.getExp());
-                    tv_level.setText(String.valueOf("Lv. "+ currentLevel));
+                    tv_level.setText(String.valueOf("Lv. " + currentLevel));
 
                     int remainingExp = User.getRemainingExp(user.getExp());
                     pbar_level.setProgress(remainingExp);
 
-                    tv_coins.setText(user.getMoney()+"c");
+                    tv_coins.setText(user.getMoney() + "c");
 
                     updateGameAccess();
                 }
@@ -195,9 +193,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailed(Exception e) {
-                Log.e(TAG, "Error getting user profile", e);}
+                Log.e(TAG, "Error getting user profile", e);
+            }
         });
     }
+
     private void updateGameAccess() {
 
         // Snake

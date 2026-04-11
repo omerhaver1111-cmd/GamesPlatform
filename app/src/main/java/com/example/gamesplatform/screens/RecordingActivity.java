@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.Button;
@@ -24,11 +23,6 @@ public class RecordingActivity extends AppCompatActivity {
 
     private AudioService audioService;
     private boolean isBound = false;
-    private boolean isRecording = false;
-
-    private Button btnRecord, btnPlay, btnStartGame;
-
-    // ניהול החיבור לשירות
     private final ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -42,6 +36,8 @@ public class RecordingActivity extends AppCompatActivity {
             isBound = false;
         }
     };
+    private boolean isRecording = false;
+    private Button btnRecord, btnPlay, btnStartGame, btnReturnToMain;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +47,6 @@ public class RecordingActivity extends AppCompatActivity {
         initViews();
         setupClickListeners();
 
-        // הפעלת השירות וחיבור אליו (Binding)
         Intent intent = new Intent(this, AudioService.class);
         startService(intent); // מוודא שהשירות ימשיך לרוץ גם אם ה-Activity תשתנה
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
@@ -61,10 +56,10 @@ public class RecordingActivity extends AppCompatActivity {
         btnRecord = findViewById(R.id.btnRecord);
         btnPlay = findViewById(R.id.btnPlay);
         btnStartGame = findViewById(R.id.btnStartGame);
+        btnReturnToMain = findViewById(R.id.btnReturnToMain);
     }
 
     private void setupClickListeners() {
-        // כפתור הקלטה/עצירה
         btnRecord.setOnClickListener(v -> {
             if (!isBound) return;
 
@@ -83,21 +78,24 @@ public class RecordingActivity extends AppCompatActivity {
             }
         });
 
-        // כפתור השמעה
         btnPlay.setOnClickListener(v -> {
             if (isBound) {
                 audioService.playAudio();
             }
         });
 
-        // מעבר למשחק
         btnStartGame.setOnClickListener(v -> {
             Intent intent = new Intent(this, PianoActivity.class);
             startActivity(intent);
         });
+
+        btnReturnToMain.setOnClickListener(v -> {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        });
+
     }
 
-    // --- ניהול הרשאות ---
 
     private boolean checkAudioPermission() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
@@ -121,12 +119,10 @@ public class RecordingActivity extends AppCompatActivity {
         }
     }
 
-    // --- מחזור חיים ---
-
     @Override
     protected void onPause() {
         super.onPause();
-        // אם המשתמש יצא מהמסך בזמן הקלטה, נעצור אותה כדי לא לתקוע את המשאבים
+        //אם המשתמש יוצא ההקלטה תיעצר
         if (isRecording && isBound) {
             audioService.stopRecording();
             isRecording = false;

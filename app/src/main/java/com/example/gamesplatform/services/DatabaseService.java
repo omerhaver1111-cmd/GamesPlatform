@@ -26,43 +26,35 @@ import java.util.function.UnaryOperator;
 
 /// a service to interact with the Firebase Realtime Database.
 /// this class is a singleton, use getInstance() to get an instance of this class
+///
 /// @see #getInstance()
 /// @see FirebaseDatabase
 public class DatabaseService {
 
     /// tag for logging
+    ///
     /// @see Log
     private static final String TAG = "DatabaseService";
 
     /// paths for different data types in the database
+    ///
     /// @see DatabaseService#readData(String)
     private static final String
             USERS_PATH = "users",
             GROUP_PATH = "groups",
             CARTS_PATH = "carts";
-
-    /// callback interface for database operations
-    /// @param <T> the type of the object to return
-    /// @see DatabaseCallback#onCompleted(Object)
-    /// @see DatabaseCallback#onFailed(Exception)
-    public interface DatabaseCallback<T> {
-        /// called when the operation is completed successfully
-        public void onCompleted(T object);
-
-        /// called when the operation fails with an exception
-        public void onFailed(Exception e);
-    }
-
     /// the instance of this class
+    ///
     /// @see #getInstance()
     private static DatabaseService instance;
-
     /// the reference to the database
+    ///
     /// @see DatabaseReference
     /// @see FirebaseDatabase#getReference()
     private final DatabaseReference databaseReference;
 
     /// use getInstance() to get an instance of this class
+    ///
     /// @see DatabaseService#getInstance()
     public DatabaseService() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance(
@@ -71,6 +63,7 @@ public class DatabaseService {
     }
 
     /// get an instance of this class
+    ///
     /// @return an instance of this class
     /// @see DatabaseService
     public static DatabaseService getInstance() {
@@ -80,13 +73,10 @@ public class DatabaseService {
         return instance;
     }
 
-
-    // region private generic methods
-    // to write and read data from the database
-
     /// write data to the database at a specific path
-    /// @param path the path to write the data to
-    /// @param data the data to write (can be any object, but must be serializable, i.e. must have a default constructor and all fields must have getters and setters)
+    ///
+    /// @param path     the path to write the data to
+    /// @param data     the data to write (can be any object, but must be serializable, i.e. must have a default constructor and all fields must have getters and setters)
     /// @param callback the callback to call when the operation is completed
     /// @see DatabaseCallback
     private void writeData(@NotNull final String path, @NotNull final Object data, final @Nullable DatabaseCallback<Void> callback) {
@@ -101,8 +91,13 @@ public class DatabaseService {
         });
     }
 
+
+    // region private generic methods
+    // to write and read data from the database
+
     /// remove data from the database at a specific path
-    /// @param path the path to remove the data from
+    ///
+    /// @param path     the path to remove the data from
     /// @param callback the callback to call when the operation is completed
     /// @see DatabaseCallback
     private void deleteData(@NotNull final String path, @Nullable final DatabaseCallback<Void> callback) {
@@ -118,6 +113,7 @@ public class DatabaseService {
     }
 
     /// read data from the database at a specific path
+    ///
     /// @param path the path to read the data from
     /// @return a DatabaseReference object to read the data from
     /// @see DatabaseReference
@@ -126,10 +122,10 @@ public class DatabaseService {
         return databaseReference.child(path);
     }
 
-
     /// get data from the database at a specific path
-    /// @param path the path to get the data from
-    /// @param clazz the class of the object to return
+    ///
+    /// @param path     the path to get the data from
+    /// @param clazz    the class of the object to return
     /// @param callback the callback to call when the operation is completed
     /// @see DatabaseCallback
     /// @see Class
@@ -146,8 +142,9 @@ public class DatabaseService {
     }
 
     /// get a list of data from the database at a specific path
-    /// @param path the path to get the data from
-    /// @param clazz the class of the objects to return
+    ///
+    /// @param path     the path to get the data from
+    /// @param clazz    the class of the objects to return
     /// @param callback the callback to call when the operation is completed
     private <T> void getDataList(@NotNull final String path, @NotNull final Class<T> clazz, @NotNull final DatabaseCallback<List<T>> callback) {
         readData(path).get().addOnCompleteListener(task -> {
@@ -170,6 +167,7 @@ public class DatabaseService {
     }
 
     /// generate a new id for a new object in the database
+    ///
     /// @param path the path to generate the id for
     /// @return a new id for the object
     /// @see String
@@ -179,11 +177,11 @@ public class DatabaseService {
         return databaseReference.child(path).push().getKey();
     }
 
-
     /// run a transaction on the data at a specific path </br>
     /// good for incrementing a value or modifying an object in the database
-    /// @param path the path to run the transaction on
-    /// @param clazz the class of the object to return
+    ///
+    /// @param path     the path to run the transaction on
+    /// @param clazz    the class of the object to return
     /// @param function the function to apply to the current value of the data
     /// @param callback the callback to call when the operation is completed
     /// @see DatabaseReference#runTransaction(Transaction.Handler)
@@ -216,13 +214,8 @@ public class DatabaseService {
 
     }
 
-    // endregion of private methods for reading and writing data
-
-    // public methods to interact with the database
-
-    // region User Section
-
     /// generate a new id for a new user in the database
+    ///
     /// @return a new id for the user
     /// @see #generateNewId(String)
     /// @see User
@@ -230,7 +223,14 @@ public class DatabaseService {
         return generateNewId(USERS_PATH);
     }
 
+    // endregion of private methods for reading and writing data
+
+    // public methods to interact with the database
+
+    // region User Section
+
     /// generate a new id for a new user in the database
+    ///
     /// @return a new id for the user
     /// @see #generateNewId(String)
     /// @see Group
@@ -239,10 +239,11 @@ public class DatabaseService {
     }
 
     /// create a new user in the database
-    /// @param user the user object to create
+    ///
+    /// @param user     the user object to create
     /// @param callback the callback to call when the operation is completed
-    ///              the callback will receive void
-    ///            if the operation fails, the callback will receive an exception
+    ///                              the callback will receive void
+    ///                            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see User
     public void createNewUser(@NotNull final User user, @Nullable final DatabaseCallback<Void> callback) {
@@ -250,10 +251,11 @@ public class DatabaseService {
     }
 
     /// create a new user in the database
-    /// @param group the user object to create
+    ///
+    /// @param group    the user object to create
     /// @param callback the callback to call when the operation is completed
-    ///              the callback will receive void
-    ///            if the operation fails, the callback will receive an exception
+    ///                              the callback will receive void
+    ///                            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Group
     public void createNewGroup(@NotNull final Group group, @Nullable final DatabaseCallback<Void> callback) {
@@ -261,10 +263,11 @@ public class DatabaseService {
     }
 
     /// get a user from the database
-    /// @param uid the id of the user to get
+    ///
+    /// @param uid      the id of the user to get
     /// @param callback the callback to call when the operation is completed
-    ///               the callback will receive the user object
-    ///             if the operation fails, the callback will receive an exception
+    ///                               the callback will receive the user object
+    ///                             if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see User
     public void getUser(@NotNull final String uid, @NotNull final DatabaseCallback<User> callback) {
@@ -272,10 +275,11 @@ public class DatabaseService {
     }
 
     /// get a user from the database
-    /// @param id the id of the user to get
+    ///
+    /// @param id       the id of the user to get
     /// @param callback the callback to call when the operation is completed
-    ///               the callback will receive the user object
-    ///             if the operation fails, the callback will receive an exception
+    ///                               the callback will receive the user object
+    ///                             if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Group
     public void getGroup(@NotNull final String id, @NotNull final DatabaseCallback<Group> callback) {
@@ -283,9 +287,10 @@ public class DatabaseService {
     }
 
     /// get all the users from the database
+    ///
     /// @param callback the callback to call when the operation is completed
-    ///              the callback will receive a list of user objects
-    ///            if the operation fails, the callback will receive an exception
+    ///                              the callback will receive a list of user objects
+    ///                            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see List
     /// @see User
@@ -294,9 +299,10 @@ public class DatabaseService {
     }
 
     /// get all the users from the database
+    ///
     /// @param callback the callback to call when the operation is completed
-    ///              the callback will receive a list of user objects
-    ///            if the operation fails, the callback will receive an exception
+    ///                              the callback will receive a list of user objects
+    ///                            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see List
     /// @see Group
@@ -321,26 +327,30 @@ public class DatabaseService {
             }
         });
     }
+
     /// delete a user from the database
-    /// @param uid the user id to delete
+    ///
+    /// @param uid      the user id to delete
     /// @param callback the callback to call when the operation is completed
     public void deleteUser(@NotNull final String uid, @Nullable final DatabaseCallback<Void> callback) {
         deleteData(USERS_PATH + "/" + uid, callback);
     }
 
     /// delete a user from the database
-    /// @param gid the user id to delete
+    ///
+    /// @param gid      the user id to delete
     /// @param callback the callback to call when the operation is completed
     public void deleteGroup(@NotNull final String gid, @Nullable final DatabaseCallback<Void> callback) {
         deleteData(GROUP_PATH + "/" + gid, callback);
     }
 
     /// get a user by email and password
-    /// @param email the email of the user
+    ///
+    /// @param email    the email of the user
     /// @param password the password of the user
     /// @param callback the callback to call when the operation is completed
-    ///            the callback will receive the user object
-    ///          if the operation fails, the callback will receive an exception
+    ///                            the callback will receive the user object
+    ///                          if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see User
     public void getUserByEmailAndPassword(@NotNull final String email, @NotNull final String password, @NotNull final DatabaseCallback<User> callback) {
@@ -364,10 +374,11 @@ public class DatabaseService {
     }
 
     /// get a user by email and password
+    ///
     /// @param group_name the name of the group
-    /// @param callback the callback to call when the operation is completed
-    ///            the callback will receive the user object
-    ///          if the operation fails, the callback will receive an exception
+    /// @param callback   the callback to call when the operation is completed
+    ///                              the callback will receive the user object
+    ///                            if the operation fails, the callback will receive an exception
     /// @see DatabaseCallback
     /// @see Group
     public void getUserByGroupName(@NotNull final String group_name, @NotNull final DatabaseCallback<Group> callback) {
@@ -391,7 +402,8 @@ public class DatabaseService {
     }
 
     /// check if an email already exists in the database
-    /// @param email the email to check
+    ///
+    /// @param email    the email to check
     /// @param callback the callback to call when the operation is completed
     public void checkIfEmailExists(@NotNull final String email, @NotNull final DatabaseCallback<Boolean> callback) {
         getUserList(new DatabaseCallback<List<User>>() {
@@ -412,7 +424,6 @@ public class DatabaseService {
             }
         });
     }
-
 
     public void updateUser(@NotNull final String userId, UnaryOperator<User> function, @Nullable final DatabaseCallback<Void> callback) {
         runTransaction(USERS_PATH + "/" + userId, User.class, function, new DatabaseCallback<User>() {
@@ -441,13 +452,26 @@ public class DatabaseService {
                 }
             }
 
-                @Override
-                public void onFailed(Exception e) {
-                    if (callback != null) {
-                        callback.onFailed(e);
-                    }
+            @Override
+            public void onFailed(Exception e) {
+                if (callback != null) {
+                    callback.onFailed(e);
                 }
-            });
+            }
+        });
+    }
+
+    /// callback interface for database operations
+    ///
+    /// @param <T> the type of the object to return
+    /// @see DatabaseCallback#onCompleted(Object)
+    /// @see DatabaseCallback#onFailed(Exception)
+    public interface DatabaseCallback<T> {
+        /// called when the operation is completed successfully
+        public void onCompleted(T object);
+
+        /// called when the operation fails with an exception
+        public void onFailed(Exception e);
     }
 
 

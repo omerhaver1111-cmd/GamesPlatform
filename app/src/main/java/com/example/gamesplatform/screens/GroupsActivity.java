@@ -2,14 +2,6 @@ package com.example.gamesplatform.screens;
 
 import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
-import com.example.gamesplatform.R;
-
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -19,15 +11,19 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.EdgeToEdge;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.gamesplatform.R;
 import com.example.gamesplatform.adapters.GroupsAdapter;
 import com.example.gamesplatform.models.Group;
 import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
-import com.google.firebase.database.DataSnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,7 +59,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             return insets;
         });
 
-        // Get current user
         currentUser = SharedPreferencesUtil.getUser(this);
         if (currentUser == null) {
             Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
@@ -98,13 +93,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-        // Initialize views
         initViews();
-        // Setup RecyclerView
         setupRecyclerView();
-        // Setup button listeners
         setupButtons();
-        // Load groups
         loadUsers();
         loadGroups();
 
@@ -175,7 +166,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         DatabaseService.getInstance().getUserList(new DatabaseService.DatabaseCallback<List<User>>() {
             @Override
             public void onCompleted(List<User> users) {
-                Toast.makeText(GroupsActivity.this, "users: "+users.size(), Toast.LENGTH_LONG).show();
+                Toast.makeText(GroupsActivity.this, "users: " + users.size(), Toast.LENGTH_LONG).show();
                 group_adapter.setUsers(users);
             }
 
@@ -187,7 +178,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     }
 
-    private void loadGroups(){
+    private void loadGroups() {
         DatabaseService.getInstance().getGroupList(new DatabaseService.DatabaseCallback<List<Group>>() {
             @Override
             public void onCompleted(List<Group> groups) {
@@ -197,9 +188,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                 String groupName = etGroupId.getText().toString();
                 filterGroups(groupName);
             }
+
             @Override
-            public void onFailed(Exception e)
-            {
+            public void onFailed(Exception e) {
                 Log.e(TAG, "Failed to load groups", e);
             }
         });
@@ -318,8 +309,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         DatabaseService.getInstance().updateGroup(targetGroup.getGroupId(), new UnaryOperator<Group>() {
             @Override
             public Group apply(Group serverGroup) {
-                if (serverGroup != null)
-                {
+                if (serverGroup != null) {
                     serverGroup.addMember(currentUserId);
                 }
                 return serverGroup;
@@ -348,7 +338,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             }
         });
     }
-
 
 
     private void filterGroups(String text) {

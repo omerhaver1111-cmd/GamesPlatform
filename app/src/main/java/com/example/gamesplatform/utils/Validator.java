@@ -1,4 +1,5 @@
 package com.example.gamesplatform.utils;
+
 import android.util.Patterns;
 
 import androidx.annotation.Nullable;
@@ -9,6 +10,7 @@ import androidx.annotation.Nullable;
 public class Validator {
 
     /// Check if the email is valid
+    ///
     /// @param email email to validate
     /// @return true if the email is valid, false otherwise
     /// @see Patterns#EMAIL_ADDRESS
@@ -17,6 +19,7 @@ public class Validator {
     }
 
     /// Check if the password is valid
+    ///
     /// @param password password to validate
     /// @return true if the password is valid, false otherwise
     public static boolean isPasswordValid(@Nullable String password) {
@@ -24,6 +27,7 @@ public class Validator {
     }
 
     /// Check if the name is valid
+    ///
     /// @param name name to validate
     /// @return true if the name is valid, false otherwise
     public static boolean isNameValid(@Nullable String name) {
