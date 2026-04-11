@@ -119,17 +119,17 @@ public class MyGroupActivity extends AppCompatActivity {
             }
         });
 
-        btn_to_main = findViewById(R.id.btn_mygroup_home);
+        btn_to_main = findViewById(R.id.btn_group_home);
         btn_to_main.setOnClickListener(v -> {
             startActivity(new Intent(MyGroupActivity.this, MainActivity.class));
         });
 
-        btn_to_player_info = findViewById(R.id.btn_mygroup_info);
+        btn_to_player_info = findViewById(R.id.btn_group_info);
         btn_to_player_info.setOnClickListener(v -> {
             startActivity(new Intent(MyGroupActivity.this, PlayerInfoActivity.class));
         });
 
-        btn_to_group = findViewById(R.id.btn_mygroup);
+        btn_to_group = findViewById(R.id.btn_group);
         btn_to_group.setOnClickListener(v -> {
             User currentUser = SharedPreferencesUtil.getUser(MyGroupActivity.this);
             if (currentUser == null) return;

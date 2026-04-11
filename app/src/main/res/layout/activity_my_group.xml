@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="ltr"
     android:background="@drawable/background1_1"
     tools:context=".screens.MyGroupActivity">
 
@@ -38,7 +39,6 @@
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_launcher_background" />
 
-                <!-- ✅ תוכן מעל הבאנר -->
                 <LinearLayout
                     android:id="@+id/my_group_card"
                     android:layout_width="match_parent"
@@ -110,35 +110,30 @@
         app:layout_constraintTop_toBottomOf="@+id/linearLayout3">
 
         <Button
-            android:id="@+id/btn_main_shop4"
-            android:layout_width="103dp"
-            android:layout_height="153dp"
-            android:layout_marginBottom="4dp"
-            android:backgroundTint="#00FFFFFF"
-            android:text="shop"
-            android:textSize="24sp" />
-
-        <Button
-            android:id="@+id/btn_mygroup_home"
-            android:layout_width="102dp"
-            android:layout_height="157dp"
-            android:backgroundTint="#00FFFFFF"
-            android:text="home"
-            android:textSize="20sp" />
-
-        <Button
-            android:id="@+id/btn_mygroup"
-            android:layout_width="107dp"
-            android:layout_height="153dp"
+            android:id="@+id/btn_group"
+            android:layout_width="137dp"
+            android:layout_height="130dp"
+            android:layout_gravity="bottom"
             android:layout_marginBottom="4dp"
             android:backgroundTint="#00FFFFFF"
             android:text="group"
             android:textSize="20sp" />
 
         <Button
-            android:id="@+id/btn_mygroup_info"
-            android:layout_width="107dp"
-            android:layout_height="153dp"
+            android:id="@+id/btn_group_home"
+            android:layout_width="137dp"
+            android:layout_height="130dp"
+            android:layout_gravity="bottom"
+            android:layout_marginBottom="4dp"
+            android:backgroundTint="#00FFFFFF"
+            android:text="home"
+            android:textSize="20sp" />
+
+        <Button
+            android:id="@+id/btn_group_info"
+            android:layout_width="137dp"
+            android:layout_height="130dp"
+            android:layout_gravity="bottom"
             android:layout_marginBottom="4dp"
             android:backgroundTint="#00FFFFFF"
             android:text="info"

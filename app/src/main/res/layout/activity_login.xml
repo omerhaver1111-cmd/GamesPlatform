@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="ltr"
     android:background="#12003F"
     android:backgroundTint="#12003F"
     tools:context=".screens.LoginActivity">
@@ -23,7 +24,7 @@
         app:srcCompat="@drawable/logo_gameon" />
 
     <Button
-        android:id="@+id/btn_login_login"
+        android:id="@+id/btn_register"
         android:layout_width="165dp"
         android:layout_height="44dp"
         android:layout_marginTop="20dp"
@@ -37,7 +38,7 @@
         app:layout_constraintVertical_bias="1.0" />
 
     <Button
-        android:id="@+id/btn_login_to_register"
+        android:id="@+id/btn_register_to_login"
         android:layout_width="165dp"
         android:layout_height="44dp"
         android:layout_marginStart="30dp"
@@ -47,7 +48,7 @@
         android:backgroundTint="#AE08FD"
         android:text="register"
         app:layout_constraintBottom_toTopOf="@+id/imageView2"
-        app:layout_constraintEnd_toStartOf="@+id/btn_login_login"
+        app:layout_constraintEnd_toStartOf="@+id/btn_register"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout"

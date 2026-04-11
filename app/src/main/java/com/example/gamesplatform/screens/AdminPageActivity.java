@@ -110,15 +110,6 @@ public class AdminPageActivity extends BaseActivity {
                 }
             }
         });
-
-        btn_to_shop = findViewById(R.id.btn_admin_shop);
-        btn_to_shop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(AdminPageActivity.this, ShopActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
 

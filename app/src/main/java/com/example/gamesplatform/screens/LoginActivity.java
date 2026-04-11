@@ -39,8 +39,8 @@ public class LoginActivity extends BaseActivity implements View.OnClickListener 
         /// get the views
         etEmail = findViewById(R.id.et_login_email);
         etPassword = findViewById(R.id.et_login_password);
-        btnLogin = findViewById(R.id.btn_login_login);
-        btnRegister = findViewById(R.id.btn_login_to_register);
+        btnLogin = findViewById(R.id.btn_register);
+        btnRegister = findViewById(R.id.btn_register_to_login);
 
         btnRegister.setOnClickListener(new View.OnClickListener() {
             @Override

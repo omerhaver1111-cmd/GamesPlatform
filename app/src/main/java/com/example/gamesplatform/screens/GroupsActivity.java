@@ -67,7 +67,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         }
         currentUserId = currentUser.getId();
 
-        btn_to_main = findViewById((R.id.btn_mygroup_home));
+        btn_to_main = findViewById((R.id.btn_group_home));
         btn_to_main.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,7 +76,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             }
         });
 
-        btn_to_player_info = findViewById(R.id.btn_mygroup_info);
+        btn_to_player_info = findViewById(R.id.btn_group_info);
         btn_to_player_info.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,17 +149,6 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         });
         rvGroups.setAdapter(group_adapter);
 
-//        rvUsers.setLayoutManager(new LinearLayoutManager(this));
-//        usersAdapter = new GroupsAdapter(new UsersAdapter.OnUserClickListener() {
-//            @Override
-//            public void onClick(User user) {
-//                // Handle group click - open group details
-//                Toast.makeText(GroupsActivity.this,
-//                        "Clicked: " + user.groupName,
-//                        Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//        rvUsers.setAdapter(usersAdapter);
     }
 
     private void loadUsers() {

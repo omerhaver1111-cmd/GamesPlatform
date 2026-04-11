@@ -5,6 +5,7 @@
     android:id="@+id/player_profile"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="ltr"
     android:background="@drawable/background1_1"
     tools:context=".screens.PlayerInfoActivity">
 
@@ -74,43 +75,6 @@
                         android:text="user@example.com"
                         android:textColor="?attr/colorOnSurfaceVariant"
                         android:textSize="14sp" />
-
-                    <com.google.android.material.card.MaterialCardView
-                        android:id="@+id/admin_badge"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:visibility="gone"
-                        app:cardBackgroundColor="?attr/colorSecondary"
-                        app:cardCornerRadius="16dp"
-                        app:cardElevation="2dp">
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="center_vertical"
-                            android:orientation="horizontal"
-                            android:paddingHorizontal="12dp"
-                            android:paddingVertical="6dp">
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginEnd="6dp"
-                                android:text="⚙️"
-                                android:textSize="14sp" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Administrator"
-                                android:textColor="?attr/colorOnSecondary"
-                                android:textSize="12sp"
-                                android:textStyle="bold" />
-
-                        </LinearLayout>
-
-                    </com.google.android.material.card.MaterialCardView>
 
                 </LinearLayout>
 
@@ -339,52 +303,46 @@
 
             </com.google.android.material.card.MaterialCardView>
 
+            <LinearLayout
+                android:layout_width="398dp"
+                android:layout_height="178dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/btn_info_to_group"
+                    android:layout_width="137dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="4dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:text="group"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/btn_main_home"
+                    android:layout_width="137dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="4dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:text="home"
+                    android:textSize="20sp" />
+
+                <Button
+                    android:id="@+id/btn_main_info"
+                    android:layout_width="137dp"
+                    android:layout_height="130dp"
+                    android:layout_gravity="bottom"
+                    android:layout_marginBottom="4dp"
+                    android:backgroundTint="#00FFFFFF"
+                    android:text="info"
+                    android:textSize="24sp" />
+            </LinearLayout>
+
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 
-    <Button
-        android:id="@+id/btn_main_shop"
-        android:layout_width="103dp"
-        android:layout_height="153dp"
-        android:layout_marginBottom="4dp"
-        android:backgroundTint="#00FFFFFF"
-        android:text="shop"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 
-    <Button
-        android:id="@+id/btn_main_info"
-        android:layout_width="107dp"
-        android:layout_height="153dp"
-        android:layout_marginBottom="4dp"
-        android:backgroundTint="#00FFFFFF"
-        android:text="info"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/btn_main_home"
-        android:layout_width="102dp"
-        android:layout_height="157dp"
-        android:backgroundTint="#00FFFFFF"
-        android:text="home"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/btn_main_shop" />
-
-    <Button
-        android:id="@+id/btn_info_to_group"
-        android:layout_width="107dp"
-        android:layout_height="153dp"
-        android:layout_marginBottom="4dp"
-        android:backgroundTint="#00FFFFFF"
-        android:text="group"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/btn_main_info" />
 </androidx.constraintlayout.widget.ConstraintLayout>

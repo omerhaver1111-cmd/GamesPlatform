@@ -32,9 +32,9 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
     String selectedUid;
     User selectedUser;
     boolean isCurrentUser = false;
-    private EditText etUserFirstName, etUserLastName, etUserEmail, etUserPassword;
+    private EditText etUserFirstName, etUserNickName, etUserEmail, etUserPassword;
     private TextView tvUserDisplayEmail, btn_to_player_info, btn_to_group, btn_to_main, tv_username, tv_nick_name, tv_level, tv_money;
-    private Button btnUpdateProfile, btn_logout, btn_to_admin_page, btn_to_shop;
+    private Button btnUpdateProfile, btn_logout, btn_to_admin_page;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,11 +86,10 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
         // Initialize the EditText fields
         etUserFirstName = findViewById(R.id.et_user_first_name);
-        etUserLastName = findViewById(R.id.et_user_nick_name);
+        etUserNickName = findViewById(R.id.et_user_nick_name);
         etUserEmail = findViewById(R.id.et_user_email);
         etUserPassword = findViewById(R.id.et_user_password);
         tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
-//       adminBadge = findViewById(R.id.admin_badge);
 
         btnUpdateProfile = findViewById(R.id.btn_edit_profile);
         btnUpdateProfile.setOnClickListener(this);
@@ -150,14 +149,6 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             }
         });
 
-        btn_to_shop = findViewById(R.id.btn_main_shop);
-        btn_to_shop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(PlayerInfoActivity.this, ShopActivity.class);
-                startActivity(intent);
-            }
-        });
         btn_logout = findViewById(R.id.btn_player_profile_logout);
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,7 +218,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 selectedUser = user;
                 // Set the user data to the EditText fields
                 etUserFirstName.setText(user.getUsername());
-                etUserLastName.setText(user.getNickname());
+                etUserNickName.setText(user.getNickname());
                 etUserEmail.setText(user.getEmail());
                 etUserPassword.setText(user.getPassword());
 
@@ -261,7 +252,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         }
         // Get the updated user data from the EditText fields
         String firstName = etUserFirstName.getText().toString();
-        String lastName = etUserLastName.getText().toString();
+        String lastName = etUserNickName.getText().toString();
         String email = etUserEmail.getText().toString();
         String password = etUserPassword.getText().toString();
 
@@ -331,8 +322,8 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             return false;
         }
         if (!Validator.isNameValid(lastName)) {
-            etUserLastName.setError("Last name is required");
-            etUserLastName.requestFocus();
+            etUserNickName.setError("Last name is required");
+            etUserNickName.requestFocus();
             return false;
         }
         if (!Validator.isEmailValid(email)) {

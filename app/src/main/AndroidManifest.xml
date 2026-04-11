@@ -47,9 +47,6 @@
             android:name=".screens.MyGroupActivity"
             android:exported="false" />
         <activity
-            android:name=".screens.BearRunner"
-            android:exported="false" />
-        <activity
             android:name=".screens.AdminPageActivity"
             android:exported="false" />
         <activity

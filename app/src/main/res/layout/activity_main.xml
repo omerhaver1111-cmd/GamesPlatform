@@ -5,6 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layoutDirection="ltr"
     android:background="@drawable/background1_1"
     tools:context=".screens.MainActivity">
 
@@ -147,18 +148,18 @@
                 android:background="#49000000"
                 android:backgroundTint="#0D0C0C"
                 android:text="car"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/play_snake_button"
-                android:layout_width="121dp"
+                android:layout_width="154dp"
                 android:layout_height="64dp"
                 android:layout_weight="1"
                 android:background="#49000000"
                 android:backgroundTint="#0D0C0C"
                 android:text="Snake"
                 android:textColorLink="#673AB7"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/play_piano_button"
@@ -168,45 +169,40 @@
                 android:background="#49000000"
                 android:backgroundTint="#0D0C0C"
                 android:text="piano"
-                android:textSize="24sp" />
+                android:textSize="20sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="165dp"
+            android:layout_gravity="bottom"
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/btn_main_shop"
-                android:layout_width="103dp"
-                android:layout_height="153dp"
+                android:id="@+id/btn_main_group"
+                android:layout_width="137dp"
+                android:layout_height="130dp"
+                android:layout_gravity="bottom"
                 android:layout_marginBottom="4dp"
                 android:backgroundTint="#00FFFFFF"
-                android:text="shop"
+                android:text="group"
                 android:textSize="24sp" />
 
             <Button
                 android:id="@+id/btn_main_home"
-                android:layout_width="102dp"
-                android:layout_height="157dp"
+                android:layout_width="137dp"
+                android:layout_height="130dp"
+                android:layout_gravity="bottom"
                 android:backgroundTint="#00FFFFFF"
                 android:text="home"
-                android:textSize="20sp" />
-
-            <Button
-                android:id="@+id/btn_main_group"
-                android:layout_width="107dp"
-                android:layout_height="153dp"
-                android:layout_marginBottom="4dp"
-                android:backgroundTint="#00FFFFFF"
-                android:text="group"
-                android:textSize="20sp" />
+                android:textSize="24sp" />
 
             <Button
                 android:id="@+id/btn_main_info"
-                android:layout_width="107dp"
-                android:layout_height="153dp"
+                android:layout_width="137dp"
+                android:layout_height="130dp"
+                android:layout_gravity="bottom"
                 android:layout_marginBottom="4dp"
                 android:backgroundTint="#00FFFFFF"
                 android:text="info"

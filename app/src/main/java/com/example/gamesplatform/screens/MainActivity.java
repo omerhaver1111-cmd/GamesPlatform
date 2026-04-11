@@ -116,14 +116,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn_to_shop = findViewById(R.id.btn_main_shop);
-        btn_to_shop.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, ShopActivity.class);
-                startActivity(intent);
-            }
-        });
 
         play_car_btn = findViewById(R.id.play_car_button);
         play_car_btn.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
         play_snake_btn = findViewById(R.id.play_snake_button);
         play_snake_btn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -203,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
         // Snake
         if (currentLevel < SNAKE_LEVEL) {
             play_snake_btn.setEnabled(false);
-            play_snake_btn.setText("🔒 Snake (Lv." + SNAKE_LEVEL + ")");
+            play_snake_btn.setText("🔒Snake " + SNAKE_LEVEL);
             play_snake_btn.setAlpha(0.5f);
         } else {
             play_snake_btn.setEnabled(true);
@@ -214,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
         // Piano
         if (currentLevel < PIANO_LEVEL) {
             play_piano_btn.setEnabled(false);
-            play_piano_btn.setText("🔒 Piano (Lv." + PIANO_LEVEL + ")");
+            play_piano_btn.setText("🔒Piano " + PIANO_LEVEL);
             play_piano_btn.setAlpha(0.5f);
         } else {
             play_piano_btn.setEnabled(true);

@@ -24,11 +24,10 @@ import com.google.android.material.textfield.TextInputLayout;
 public class RegisterActivity extends BaseActivity implements View.OnClickListener {
     private static final String TAG = "RegisterActivity";
 
-    Button toLanding;
-
+    Button toLogin;
     private EditText etPassword, etPassword2;
     private TextInputLayout etEmail, etFName, etLName;
-    private Button btnRegister, btnMainToInfo, btnMainToGroup;
+    private Button btnRegister ;
     private TextView tvLogin;
 
 
@@ -49,18 +48,18 @@ public class RegisterActivity extends BaseActivity implements View.OnClickListen
         etPassword2 = findViewById(R.id.et_register_password2);
         etFName = findViewById(R.id.et_register_first_name);
         etLName = findViewById(R.id.et_register_nick_name);
-        btnRegister = findViewById(R.id.btn_login_login);
+        btnRegister = findViewById(R.id.btn_register);
         tvLogin = findViewById(R.id.tv_register_login);
 
         btnRegister.setOnClickListener(this);
         tvLogin.setOnClickListener(this);
 
 
-        toLanding = findViewById(R.id.btn_register_go_to_landing);
-        toLanding.setOnClickListener(new View.OnClickListener() {
+        toLogin = findViewById(R.id.btn_register_to_login);
+        toLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(RegisterActivity.this, LandingActivity.class);
+                Intent intent = new Intent(RegisterActivity.this, LoginActivity.class);
                 startActivity(intent);
             }
         });
