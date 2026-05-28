@@ -32,7 +32,6 @@ public class PianoGameView extends View {
     private AudioService audioService;
     private CountDownTimer gameTimer;
 
-    // ✅ listener
     private GameOverListener gameOverListener;
 
     public PianoGameView(Context context, AudioService service) {
@@ -122,7 +121,7 @@ public class PianoGameView extends View {
 
         showGameOverOverlay = true;
 
-        // ✅ קריאה ל-Activity
+        ///  קריאה ל-Activity
         if (gameOverListener != null) {
             gameOverListener.onGameOver(score);
         }
@@ -151,13 +150,19 @@ public class PianoGameView extends View {
             int currentRowTop = (i + 1) * tileHeight;
 
             for (int j = 0; j < 4; j++) {
+                Paint p;
+                if (j == row.correctIndex) {
+                    if (row.isBonus) {
+                        p = bluePaint;
+                    } else {
+                        p = blackPaint;
+                    }
+                } else {
+                    p = whitePaint;
+                }
 
-                Paint p = (j == row.correctIndex)
-                        ? (row.isBonus ? bluePaint : blackPaint)
-                        : whitePaint;
 
-                Rect rect = new Rect(
-                        j * tileWidth,
+                Rect rect = new Rect(j * tileWidth,
                         currentRowTop,
                         (j + 1) * tileWidth,
                         currentRowTop + tileHeight
@@ -171,41 +176,41 @@ public class PianoGameView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+        if(!isGameOver) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
 
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                int tileHeight = getHeight() / 6;
+                int rowClicked = (int) (event.getY() / tileHeight);
 
-            int tileHeight = getHeight() / 6;
-            int rowClicked = (int) (event.getY() / tileHeight);
+                if (rowClicked == 5 && !rows.isEmpty()) {
 
-            if (rowClicked == 5 && !rows.isEmpty()) {
+                    int column = (int) (event.getX() / (getWidth() / 4));
+                    PianoRow bottomRow = rows.get(rows.size() - 1);
 
-                int column = (int) (event.getX() / (getWidth() / 4));
-                PianoRow bottomRow = rows.get(rows.size() - 1);
+                    if (column == bottomRow.correctIndex) {
 
-                if (column == bottomRow.correctIndex) {
+                        if (audioService != null) {
+                            audioService.playPianoNote();
+                        }
 
-                    if (audioService != null) {
-                        audioService.playPianoNote();
+                        score++;
+
+                        if (bottomRow.isBonus) {
+                            timeLeftInMillis += 5000;
+                            startNewTimer(timeLeftInMillis);
+                        }
+
+                        rows.remove(bottomRow);
+                        rows.add(0, generateRandomRow());
+
+                    } else {
+                        triggerGameOver();
                     }
 
-                    score++;
-
-                    if (bottomRow.isBonus) {
-                        timeLeftInMillis += 5000;
-                        startNewTimer(timeLeftInMillis);
-                    }
-
-                    rows.remove(bottomRow);
-                    rows.add(0, generateRandomRow());
-
-                } else {
-                    triggerGameOver();
+                    invalidate();
                 }
-
-                invalidate();
             }
         }
-
         return true;
     }
 

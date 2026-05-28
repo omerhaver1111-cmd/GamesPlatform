@@ -1,31 +1,4 @@
 package com.example.gamesplatform.models;
-//
-//import android.graphics.Rect;
-//
-//import java.util.Random;
-//
-//public class Obstacle {
-//    public int x, y, width, height, speed;
-//
-//    public Obstacle(int screenWidth, int currentSpeed) {
-//        width = 150;
-//        height = 150;
-//        speed = currentSpeed;
-//        Random random = new Random();
-//        // הגרלת מיקום אופקי התחלתי
-//        x = random.nextInt(screenWidth - width);
-//        // התחלה מעל המסך
-//        y = -height;
-//    }
-//
-//    public void update() {
-//        y += speed; // המכשול נופל למטה
-//    }
-//
-//    public Rect getRect() {
-//        return new Rect(x, y, x + width, y + height);
-//    }
-//}
 
 import android.graphics.Bitmap;
 import android.graphics.Canvas;

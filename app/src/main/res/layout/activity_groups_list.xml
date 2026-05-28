@@ -19,8 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <!-- ===== CREATE GROUP ===== -->
-
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -80,7 +78,6 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- ===== JOIN GROUP ===== -->
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -141,7 +138,6 @@
         </androidx.cardview.widget.CardView>
 
 
-        <!-- ===== RECYCLER VIEW FOR GROUPS LIST ===== -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_groups"
             android:layout_width="match_parent"

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,17 +35,15 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
     private static final String TAG = "GroupsActivity";
 
-    // UI Components
     private RecyclerView rvGroups;
     private GroupsAdapter group_adapter;
     private TextView btn_to_player_info, btn_to_main;
     private EditText etGroupName, etGroupId;
     private Button btnCreateGroup, btnJoinGroup;
 
-    // Data
     private String currentUserId;
     private User currentUser;
-    // למעלה עם שאר המשתנים
+
     private List<Group> allGroups = new ArrayList<>();
 
     @Override
@@ -58,6 +57,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        full_screen();
 
         currentUser = SharedPreferencesUtil.getUser(this);
         if (currentUser == null) {
@@ -112,22 +112,35 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG, "ahhhhhhhhhhhhhhhhhhhhhhh " + s);
+                Log.d(TAG, "ahh" + s);
                 filterGroups(s.toString());
             }
         });
     }
 
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
     private void initViews() {
-        // RecyclerView components
         rvGroups = findViewById(R.id.rv_groups);
         rvGroups.setLayoutManager(new LinearLayoutManager(this));
 
-        // Create group components
         etGroupName = findViewById(R.id.et_group_name);
         btnCreateGroup = findViewById(R.id.btn_create_group);
 
-        // Join group components
         etGroupId = findViewById(R.id.et_group_id);
         btnJoinGroup = findViewById(R.id.btn_join_group);
     }
@@ -141,10 +154,13 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
         group_adapter = new GroupsAdapter(new GroupsAdapter.OnGroupListener() {
             @Override
             public void onClick(Group group) {
-                // Handle group click - open group details
+                /// on group click open group details
                 Toast.makeText(GroupsActivity.this,
                         "Clicked: " + group.groupName,
                         Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(GroupsActivity.this, MyGroupActivity.class);
+                intent.putExtra("GROUP_ID", group.getGroupId());
+                startActivity(intent);
             }
         });
         rvGroups.setAdapter(group_adapter);
@@ -204,7 +220,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
 
         Log.d(TAG, "Creating group: " + groupName);
 
-        // Create new group
+        /// Create new group
         Group newGroup = new Group(groupName, currentUserId);
 
         createGroupInDatabase(newGroup);
@@ -219,6 +235,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             @Override
             public void onCompleted(Void object) {
                 Log.d(TAG, "createGroupInDatabase: Group created successfully");
+
                 /// save the user to shared preferences
                 SharedPreferencesUtil.saveGroup(GroupsActivity.this, group);
                 Log.d(TAG, "createUserInDatabase: Redirecting to HomePageActivity");
@@ -272,7 +289,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
-        // חיפוש הקבוצה ברשימה allGroups
+        /// חיפוש הקבוצה ברשימה allGroups
         Group targetGroup = null;
         for (Group g : allGroups) {
             if (g.id != null && g.id.equals(groupId)) {
@@ -291,10 +308,10 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
             return;
         }
 
-        // הוספת המשתמש לאובייקט הקבוצה
+        /// הוספת המשתמש לאובייקט הקבוצה
         targetGroup.addMember(currentUserId);
 
-        // עדכון ב-Firebase דרך ה-Service
+        /// עדכון ב-Firebase דרך ה-Service
         DatabaseService.getInstance().updateGroup(targetGroup.getGroupId(), new UnaryOperator<Group>() {
             @Override
             public Group apply(Group serverGroup) {
@@ -310,7 +327,7 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                 Toast.makeText(GroupsActivity.this, "Joined group!", Toast.LENGTH_SHORT).show();
                 etGroupId.setText("");
 
-                // עדכון המשתמש שהצטרף לקבוצה
+                /// עדכון המשתמש שהצטרף לקבוצה
                 currentUser.setInGroup(true);
                 SharedPreferencesUtil.saveUser(GroupsActivity.this, currentUser);
                 updateUserInDatabase(currentUser);

@@ -1,5 +1,7 @@
 package com.example.gamesplatform.models;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
@@ -40,14 +42,14 @@ public class User implements Serializable {
     }
 
     public static int levelCalculate(long xp) {
-        // Level = 0.2 * sqrt(XP)
+        /// Level = 0.2 * sqrt(XP)
         int level = (int) Math.floor(0.2 * Math.sqrt(xp));
         return Math.max(1, level);
     }
 
     public static int getRemainingExp(int xp) {
         int currentLevel = levelCalculate(xp);
-        // חישוב כמות הexp עבור הרמה
+        /// חישוב כמות הexp עבור הרמה
         int xpAtLevel = (int) Math.pow(currentLevel / 0.2, 2);
         return xp - xpAtLevel;
     }
@@ -96,12 +98,13 @@ public class User implements Serializable {
         return this.inGroup;
     }
 
+    @Exclude
     public boolean isAdmin() {
         return isAdmin;
     }
 
-    public void setAdmin(boolean admin) {
-        isAdmin = admin;
+    public void setIsAdmin(boolean isAdmin) {
+        this.isAdmin = isAdmin;
     }
 
     public int getMoney() {
@@ -165,6 +168,7 @@ public class User implements Serializable {
         return null;
     }
 
+    @NonNull
     @Override
     public String toString() {
         return "User{" +

@@ -4,9 +4,11 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/background2"
     android:layoutDirection="ltr">
 
     <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="414dp"
         android:layout_height="348dp"
         android:orientation="vertical"
@@ -19,26 +21,40 @@
             android:id="@+id/btnRecord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#093C5D"
             android:text="Record" />
 
         <Button
             android:id="@+id/btnPlay"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#093C5D"
             android:text="Play" />
 
         <Button
             android:id="@+id/btnStartGame"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#093C5D"
             android:text="Start Game" />
 
         <Button
             android:id="@+id/btnReturnToMain"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="#093C5D"
             android:text="Return" />
 
     </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView6"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/mic_img" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -22,18 +22,19 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     private List<User> users = new ArrayList<>();
     private Map<String, Group> groupsMap = new HashMap<>();
     private OnUserClickListener listener;
+    private String groupName;
 
     public UsersAdapter(OnUserClickListener listener) {
         this.listener = listener;
     }
 
-    // פונקציה לעדכון המשתמשים
+    /// פונקציה לעדכון המשתמשים
     public void setUsers(List<User> userList) {
         this.users = userList;
         notifyDataSetChanged();
     }
 
-    // פונקציה לעדכון ה-Map של הקבוצות
+    /// פונקציה לעדכון ה-Map של הקבוצות
     public void setGroupsMap(Map<String, Group> groupsMap) {
         this.groupsMap = groupsMap;
         notifyDataSetChanged();
@@ -51,27 +52,12 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     public void onBindViewHolder(@NonNull UserViewHolder holder, int position) {
         User user = users.get(position);
 
-        // הגדרת טקסטים בסיסיים
         holder.tvFullName.setText(user.getUsername());
         holder.tvNickname.setText("(@" + user.getNickname() + ")");
         holder.tvExperience.setText(user.getExp() + " XP");
-
-        // טיפול בתצוגת הקבוצה בעזרת ה-Map
-        boolean showGroup = false;
-
-        Group userGroup = user.getMyGroup(groupsMap);
-
-        if (userGroup != null) {
-            // גיבוי אם הקבוצות עוד לא נטענו
-            holder.tvGroupName.setText(userGroup.getGroupName().trim());
-            showGroup = true;
-        } else {
-            holder.tvGroupName.setText("No group");
-            holder.groupLayout.setVisibility(View.VISIBLE);
-        }
+        holder.tvGroupName.setText(groupName);
 
         holder.groupLayout.setVisibility(View.VISIBLE);
-        // הגדרת ראשי תיבות לאוואטר (טיפול בבטיחות סטרינגים)
         String name = user.getUsername();
         if (name != null && !name.isEmpty()) {
             if (name.length() >= 2) {
@@ -80,15 +66,25 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
                 holder.tvInitials.setText(name.toUpperCase());
             }
         } else {
-            holder.tvInitials.setText("??");
+            holder.tvInitials.setText("***");
         }
 
-        // הגדרת מאזין ללחיצה
+        /// הגדרת מאזין ללחיצה
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onUserClick(user);
             }
         });
+
+        holder.itemView.setOnLongClickListener(v -> {
+            if (listener != null) {
+                listener.onLongUserClick(user);
+            }
+            return false;
+        });
+    }
+    public void setGroupName(String groupName) {
+        this.groupName = groupName;
     }
 
     public void setUserList(List<User> users) {
@@ -104,6 +100,7 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
 
     public interface OnUserClickListener {
         void onUserClick(User user);
+        void onLongUserClick(User user);
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {

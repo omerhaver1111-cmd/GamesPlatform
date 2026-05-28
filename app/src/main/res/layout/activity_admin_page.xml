@@ -9,48 +9,50 @@
     android:background="@drawable/background1_1"
     tools:context=".screens.AdminPageActivity">
 
-    <ScrollView
-        android:layout_width="422dp"
-        android:layout_height="736dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+    <LinearLayout
+        android:id="@+id/linearLayout4"
+        android:layout_width="327dp"
+        android:layout_height="56dp"
+        android:layout_marginTop="10dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0">
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/tv_usres"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:gravity="center"
+            android:text="Users List"
+            android:textColor="#D4B2DE"
+            android:textSize="25sp" />
 
-            <TextView
-                android:id="@+id/tv_usres"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="Users List"
-                android:textColor="#D4B2DE"
-                android:textSize="25sp" />
+        <TextView
+            android:id="@+id/tv_user_count"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="TextView"
+            android:textColor="#BBA2C1"
+            android:textSize="20sp" />
 
-            <TextView
-                android:id="@+id/tv_user_count"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="TextView"
-                android:textColor="#BBA2C1"
-                android:textSize="20sp" />
+    </LinearLayout>
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_users_admin_page"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clipToPadding="false"
-                android:nestedScrollingEnabled="false"
-                tools:itemCount="4"
-                tools:listitem="@layout/item_group" />
-        </LinearLayout>
-    </ScrollView>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_users_admin_page"
+        android:layout_width="352dp"
+        android:layout_height="563dp"
+        android:clipToPadding="false"
+        android:nestedScrollingEnabled="false"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout4"
+        app:layout_constraintVertical_bias="0.554"
+        tools:itemCount="4"
+        tools:listitem="@layout/item_group" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"

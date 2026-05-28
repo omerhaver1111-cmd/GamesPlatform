@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.view.WindowCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
 import com.example.gamesplatform.services.AudioService;
@@ -45,11 +47,28 @@ public class RecordingActivity extends AppCompatActivity {
         setContentView(R.layout.activity_recording);
 
         initViews();
+        full_screen();
         setupClickListeners();
 
         Intent intent = new Intent(this, AudioService.class);
-        startService(intent); // מוודא שהשירות ימשיך לרוץ גם אם ה-Activity תשתנה
+        startService(intent); /// מוודא שהשירות ימשיך לרוץ גם אם ה-Activity תשתנה
         bindService(intent, connection, Context.BIND_AUTO_CREATE);
+    }
+
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
     private void initViews() {
@@ -122,7 +141,7 @@ public class RecordingActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //אם המשתמש יוצא ההקלטה תיעצר
+        ///אם המשתמש יוצא ההקלטה תיעצר
         if (isRecording && isBound) {
             audioService.stopRecording();
             isRecording = false;

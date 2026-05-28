@@ -41,8 +41,7 @@ public class DatabaseService {
     /// @see DatabaseService#readData(String)
     private static final String
             USERS_PATH = "users",
-            GROUP_PATH = "groups",
-            CARTS_PATH = "carts";
+            GROUP_PATH = "groups";
     /// the instance of this class
     ///
     /// @see #getInstance()

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -19,7 +21,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GamesPlatform">
 
-        <service android:name=".services.AudioService" />
+        <service
+            android:name=".services.AudioService" />
 
         <activity
             android:name=".screens.RecordingActivity"
@@ -30,10 +33,6 @@
         <activity
             android:name=".screens.LeaderBordActivity"
             android:exported="false" />
-        <activity
-            android:name=".screens.ShopActivity"
-            android:exported="false"
-            android:theme="@style/Theme.GamesPlatform" />
         <activity
             android:name=".screens.SnakeGameActivity"
             android:exported="false" />

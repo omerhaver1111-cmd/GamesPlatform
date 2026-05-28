@@ -21,10 +21,15 @@ public class SnakeGameView extends View {
 
     private SnakeGameListener listener;
     private int width, height;
+
+    ///  גודל הריבוע
     private int grid = 40;
 
     private ArrayList<Point> snake = new ArrayList<>();
-    private Point food;
+    private Point food; /// מיקום האוכל
+
+    /// Delta X/Y
+    /// קצב שינוי המיקום בכל טיק של המשחק
     private int dx = 1, dy = 0;
 
     private Handler handler = new Handler();
@@ -53,6 +58,7 @@ public class SnakeGameView extends View {
         handler.post(loop);
     }
 
+    /// מגדיר מיקום חדש לאוכל
     private void spawnFood() {
         int gridW = width / grid;
         int gridH = height / grid;
@@ -61,13 +67,14 @@ public class SnakeGameView extends View {
         }
     }
 
+    /// לולאת המשחחק
     private Runnable loop = new Runnable() {
         @Override
         public void run() {
             if (!gameOver) {
                 update();
                 invalidate();
-                handler.postDelayed(this, speed);
+                handler.postDelayed(this, speed); /// מחכה את הזמן המוקצב וקורא לעצמו שוב
             }
         }
     };
@@ -82,6 +89,7 @@ public class SnakeGameView extends View {
         if (gameOver) return;
 
         Point head = snake.get(0);
+        /// Next X/Y - המיקום הבא של ראש הנחש
         int nx = head.x + dx;
         int ny = head.y + dy;
 

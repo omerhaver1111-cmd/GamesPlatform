@@ -11,8 +11,8 @@ import java.util.Set;
 public class Group implements Serializable {
     public String id;
     public String leaderId;
-    public String groupName;    //שם  הקבוצה
-    public Map<String, Boolean> members; // if group leader -> true
+    public String groupName;
+    public Map<String, Boolean> members; // if leader -> true
     public String bannerImageBase64;
 
 
@@ -82,7 +82,7 @@ public class Group implements Serializable {
     /**
      * מחזירה רשימה של כל ה-IDs של המשתמשים בקבוצה
      */
-    @Exclude //  לא יישמר ב-Firebase
+    @Exclude ///  לא יישמר ב-Firebase
     public Set<String> getUserIds() {
         if (this.members == null) {
             return new HashMap<String, Boolean>().keySet();

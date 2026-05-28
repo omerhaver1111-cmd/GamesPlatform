@@ -10,10 +10,10 @@ public class Car {
 
     public Car(int screenWidth, int screenHeight, Bitmap originalBitmap) {
         width = 140;
-        height = 240; // גודל המכונית
+        height = 240; /// גודל המכונית
         x = screenWidth / 2 - width / 2;
         y = screenHeight - height - 50;
-        // יצירת גרסה מוקטנת של התמונה לגודל שקבענו
+        /// יצירת גרסה מוקטנת של התמונה לגודל שקבעתי
         carIcon = Bitmap.createScaledBitmap(originalBitmap, width, height, false);
     }
 

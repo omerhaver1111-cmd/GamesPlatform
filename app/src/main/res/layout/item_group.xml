@@ -41,7 +41,6 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- Group Info -->
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -88,7 +87,6 @@
 
         </LinearLayout>
 
-        <!-- More Options Button -->
         <com.google.android.material.card.MaterialCardView
             android:layout_width="48dp"
             android:layout_height="48dp"

@@ -13,6 +13,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -44,6 +45,8 @@ public class LeaderBordActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        full_screen();
         databaseService = new DatabaseService();
 
         carRecycler = findViewById(R.id.recycler_car);
@@ -75,14 +78,14 @@ public class LeaderBordActivity extends AppCompatActivity {
                 float diffX = e2.getX() - e1.getX();
                 float diffY = e2.getY() - e1.getY();
 
-                // בדיקה שמדובר בהחלקה אופקית
+                /// בדיקה שמדובר בהחלקה אופקית
                 if (Math.abs(diffX) > Math.abs(diffY)) {
 
                     if (Math.abs(diffX) > SWIPE_THRESHOLD &&
                             Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
 
                         if (diffX > 0) {
-                            //  החלקה ימינה → MyGroupActivity
+                            /// החלקה ימינה
                             User currentUser = SharedPreferencesUtil.getUser(LeaderBordActivity.this);
                             if (currentUser == null) {
                                 Log.e(TAG, "No logged in user");
@@ -128,6 +131,22 @@ public class LeaderBordActivity extends AppCompatActivity {
         });
     }
 
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event);
@@ -141,28 +160,44 @@ public class LeaderBordActivity extends AppCompatActivity {
     }
 
     private void loadLeaderboards() {
-        databaseService.getUserList(new DatabaseService.DatabaseCallback<List<User>>() {
 
+        databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
             @Override
-            public void onCompleted(List<User> users) {
+            public void onCompleted(Map<String, Group> groupMap) {
 
-                List<User> topCar = getTop10(users,
-                        (u1, u2) -> Integer.compare(u2.carGameRecord, u1.carGameRecord));
+                databaseService.getUserList(new DatabaseService.DatabaseCallback<List<User>>() {
 
-                List<User> topSnake = getTop10(users,
-                        (u1, u2) -> Integer.compare(u2.snakeRecord, u1.snakeRecord));
+                    @Override
+                    public void onCompleted(List<User> users) {
 
-                List<User> topPiano = getTop10(users,
-                        (u1, u2) -> Integer.compare(u2.pianoRecord, u1.pianoRecord));
+                        List<User> topCar = getTop10(users,
+                                (u1, u2) -> Integer.compare(u2.carGameRecord, u1.carGameRecord));
 
-                carAdapter.setUsers(topCar);
-                snakeAdapter.setUsers(topSnake);
-                pianoAdapter.setUsers(topPiano);
+                        List<User> topSnake = getTop10(users,
+                                (u1, u2) -> Integer.compare(u2.snakeRecord, u1.snakeRecord));
+
+                        List<User> topPiano = getTop10(users,
+                                (u1, u2) -> Integer.compare(u2.pianoRecord, u1.pianoRecord));
+
+                        carAdapter.setGroupsMap(groupMap);
+                        snakeAdapter.setGroupsMap(groupMap);
+                        pianoAdapter.setGroupsMap(groupMap);
+
+                        carAdapter.setUsers(topCar);
+                        snakeAdapter.setUsers(topSnake);
+                        pianoAdapter.setUsers(topPiano);
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(LeaderBordActivity.this, "שגיאה", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
 
             @Override
             public void onFailed(Exception e) {
-                Toast.makeText(LeaderBordActivity.this, "שגיאה", Toast.LENGTH_SHORT).show();
+                Toast.makeText(LeaderBordActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
             }
         });
     }

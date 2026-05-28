@@ -40,6 +40,11 @@ public class UsersLeaderBordAdapter extends RecyclerView.Adapter<UsersLeaderBord
         notifyDataSetChanged();
     }
 
+    public void setGroupsMap(Map<String, Group> groupsMap) {
+        this.groupsMap = groupsMap;
+        notifyDataSetChanged();
+    }
+
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -65,7 +70,6 @@ public class UsersLeaderBordAdapter extends RecyclerView.Adapter<UsersLeaderBord
 
 
         int score;
-
         switch (gameType) {
             case "car":
                 score = user.getCarGameRecord();

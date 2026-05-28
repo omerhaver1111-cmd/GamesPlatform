@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -14,6 +15,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -82,9 +84,20 @@ public class MyGroupActivity extends AppCompatActivity {
         }
 
         initViews();
+        full_screen();
         setupButtons();
         setupRecyclerView();
         loadGroupMembers();
+
+        if (currentUser.isAdmin()) {
+            btnUploadBanner.setVisibility(android.view.View.VISIBLE);
+        } else if (currentUser.isInGroup()) {
+            btnLeaveGroup.setVisibility(android.view.View.VISIBLE);
+            btnUploadBanner.setVisibility(View.GONE);
+        } else {
+            btnLeaveGroup.setVisibility(android.view.View.GONE);
+            btnUploadBanner.setVisibility(android.view.View.GONE);
+        }
 
         gestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
 
@@ -97,14 +110,14 @@ public class MyGroupActivity extends AppCompatActivity {
                 float diffX = e2.getX() - e1.getX();
                 float diffY = e2.getY() - e1.getY();
 
-                // מזהה החלקה אופקית
+                /// מזהה החלקה אופקית
                 if (Math.abs(diffX) > Math.abs(diffY)) {
 
                     if (Math.abs(diffX) > SWIPE_THRESHOLD &&
                             Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
 
                         if (diffX < 0) {
-                            // 👈 החלקה שמאלה → LeaderBoard
+                            ///  החלקה שמאלה
                             Intent intent = new Intent(MyGroupActivity.this, LeaderBordActivity.class);
                             startActivity(intent);
 
@@ -160,6 +173,22 @@ public class MyGroupActivity extends AppCompatActivity {
         });
     }
 
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         return gestureDetector.onTouchEvent(event) || super.onTouchEvent(event);
@@ -167,8 +196,26 @@ public class MyGroupActivity extends AppCompatActivity {
 
     private void setupButtons() {
 
-        // יציאה מהקבוצה
+        /// יציאה מהקבוצה
         btnLeaveGroup.setOnClickListener(v -> {
+            databaseService.updateUser(currentUser.getId(), user -> {
+                if (user == null) return null;
+                user.setInGroup(false);
+                return user;
+            }, new DatabaseService.DatabaseCallback<Void>() {
+                @Override
+                public void onCompleted(Void unused) {
+                    Toast.makeText(MyGroupActivity.this, "Left group", Toast.LENGTH_SHORT).show();
+
+                    startActivity(new Intent(MyGroupActivity.this, GroupsActivity.class));
+                    finish();
+                }
+
+                @Override
+                public void onFailed(Exception e) {
+                    Toast.makeText(MyGroupActivity.this, "User update failed", Toast.LENGTH_SHORT).show();
+                }
+            });
             if (currentUser == null) return;
 
             databaseService.updateGroup(currentGroupId, group -> {
@@ -176,7 +223,6 @@ public class MyGroupActivity extends AppCompatActivity {
 
                 group.removeMember(currentUser.getId());
                 currentUser.setInGroup(false);
-
                 return group;
 
             }, new DatabaseService.DatabaseCallback<Group>() {
@@ -191,9 +237,10 @@ public class MyGroupActivity extends AppCompatActivity {
                     Toast.makeText(MyGroupActivity.this, "Failed to leave group", Toast.LENGTH_SHORT).show();
                 }
             });
+
         });
 
-        // העלאת באנר (רק למנהל)
+        /// העלאת באנר (רק ליוצר הקבוצה)
         btnUploadBanner.setOnClickListener(v -> {
             if (currentUser == null) return;
 
@@ -285,8 +332,16 @@ public class MyGroupActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         rvGMembers.setLayoutManager(new LinearLayoutManager(this));
-        usersAdapter = new UsersAdapter(user -> {
-            Log.d(TAG, "User clicked: " + user.getUsername());
+        usersAdapter = new UsersAdapter(new UsersAdapter.OnUserClickListener() {
+            @Override
+            public void onUserClick(User user) {
+                Log.d(TAG, "User clicked: " + user.getUsername());
+            }
+
+            @Override
+            public void onLongUserClick(User user) {
+                Log.d(TAG, "User clicked: " + user.getUsername());
+            }
         });
         rvGMembers.setAdapter(usersAdapter);
     }
@@ -302,6 +357,7 @@ public class MyGroupActivity extends AppCompatActivity {
                 }
 
                 tvGroupName.setText(group.getGroupName());
+                usersAdapter.setGroupName(group.getGroupName());
                 loadGroupBanner(group);
 
                 Set<String> memberIds = group.getUserIds();
@@ -341,4 +397,6 @@ public class MyGroupActivity extends AppCompatActivity {
 
 
     }
+
+
 }

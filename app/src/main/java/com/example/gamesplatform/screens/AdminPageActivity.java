@@ -1,5 +1,6 @@
 package com.example.gamesplatform.screens;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -24,6 +26,7 @@ import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
 import java.util.List;
 import java.util.Map;
+
 
 public class AdminPageActivity extends BaseActivity {
     private static final String TAG = "AdminPageActivity";
@@ -41,18 +44,21 @@ public class AdminPageActivity extends BaseActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
+        full_screen();
         RecyclerView usersList = findViewById(R.id.rv_users_admin_page);
         tvUserCount = findViewById(R.id.tv_user_count);
         usersList.setLayoutManager(new LinearLayoutManager(this));
         userAdapter = new UsersAdapter(new UsersAdapter.OnUserClickListener() {
             @Override
             public void onUserClick(User user) {
-                // Handle user click
                 Log.d(TAG, "User clicked: " + user);
                 Intent intent = new Intent(AdminPageActivity.this, PlayerInfoActivity.class);
                 intent.putExtra("USER_UID", user.getId());
                 startActivity(intent);
+            }
+            @Override
+            public void onLongUserClick(User user) {
+                showPromoteDialog(user);
             }
         });
         usersList.setAdapter(userAdapter);
@@ -109,9 +115,60 @@ public class AdminPageActivity extends BaseActivity {
                     startActivity(intent);
                 }
             }
+
         });
+
     }
 
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
+    private void showPromoteDialog(User user) {
+
+        new AlertDialog.Builder(this)
+                .setTitle("Admin Promotion")
+                .setMessage("Do you want to make " + user.getUsername() + " an admin?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+
+                    databaseService.updateUser(user.getId(), serverUser -> {
+                        if (serverUser == null) return null;
+
+                        serverUser.setIsAdmin(true);
+                        return serverUser;
+
+                    }, new DatabaseService.DatabaseCallback<Void>() {
+                        @Override
+                        public void onCompleted(Void unused) {
+                            Toast.makeText(AdminPageActivity.this,
+                                    user.getUsername() + " is now admin",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+
+                        @Override
+                        public void onFailed(Exception e) {
+                            Toast.makeText(AdminPageActivity.this,
+                                    "Failed to update user",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
 
     @Override
     protected void onResume() {
@@ -140,6 +197,8 @@ public class AdminPageActivity extends BaseActivity {
                 Log.e(TAG, "Failed to load groups", e);
             }
         });
+
+
     }
 
 }

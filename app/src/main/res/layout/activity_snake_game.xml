@@ -69,7 +69,7 @@
 
     </LinearLayout>
 
-    <!-- Game Over -->
+
     <LinearLayout
         android:id="@+id/game_over_layout"
         android:layout_width="match_parent"

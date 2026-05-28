@@ -10,8 +10,9 @@
     tools:context=".screens.LeaderBordActivity">
 
     <ScrollView
-        android:layout_width="364dp"
-        android:layout_height="773dp"
+        android:layout_width="341dp"
+        android:layout_height="650dp"
+        android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

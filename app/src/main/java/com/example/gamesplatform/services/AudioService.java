@@ -30,7 +30,7 @@ public class AudioService extends Service {
         return binder;
     }
 
-    // --- הקלטה בשרשור נפרד כדי למנוע ANR ---
+    ///  הקלטה מופעלת בנפרד כדי למנוע קריסות
     public void startRecording() {
         new Thread(() -> {
             stopPlayback();
@@ -55,7 +55,7 @@ public class AudioService extends Service {
             try {
                 recorder.stop();
             } catch (RuntimeException e) {
-                // קורה אם ההקלטה הייתה קצרה מדי
+                /// קורה אם ההקלטה הייתה קצרה מדי
                 new File(fileName).delete();
             } finally {
                 releaseRecorder();
@@ -102,14 +102,14 @@ public class AudioService extends Service {
     }
 
     public void playPianoNote() {
-        // יוצרים נגן חדש לכל לחיצה כדי שהצלילים יוכלו להישמע יחד
+        /// יוצר נגן חדש לכל לחיצה כדי שהצלילים יוכלו להישמע יחד
         final MediaPlayer mp = new MediaPlayer();
         try {
             File file = new File(fileName);
             if (file.exists()) {
                 mp.setDataSource(fileName);
             } else {
-                // אם אין קובץ, נגן את צליל ברירת המחדל
+                /// אם אין קובץ נגן את צליל ברירת המחדל
                 AssetFileDescriptor afd = getResources().openRawResourceFd(R.raw.default_sound);
                 mp.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
                 afd.close();

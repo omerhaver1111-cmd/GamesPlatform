@@ -23,7 +23,7 @@ import java.util.Random;
 
 public class CarEscapeGameView extends View {
 
-    // ממשק כדי להודיע ל-Activity שהמשחק נגמר
+    /// ממשק כדי שהמשחק נגמר
     public interface GameCallback {
         void onGameOver(int seconds, int coins);
         int getCurrentUserMoney(); // כדי לקבל את הכסף הנוכחי לתצוגה

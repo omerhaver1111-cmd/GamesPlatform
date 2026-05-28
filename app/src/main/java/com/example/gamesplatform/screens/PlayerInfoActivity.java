@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
@@ -30,7 +31,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
     private static final String TAG = "PlayerInfoActivity";
     String selectedUid;
-    User selectedUser;
+    User selectedUser, currentUser;
     boolean isCurrentUser = false;
     private EditText etUserFirstName, etUserNickName, etUserEmail, etUserPassword;
     private TextView tvUserDisplayEmail, btn_to_player_info, btn_to_group, btn_to_main, tv_username, tv_nick_name, tv_level, tv_money;
@@ -47,9 +48,9 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             return insets;
         });
 
-
+        full_screen();
         selectedUid = getIntent().getStringExtra("USER_UID");
-        User currentUser = SharedPreferencesUtil.getUser(this);
+        currentUser = SharedPreferencesUtil.getUser(this);
         if (currentUser == null) {
             Toast.makeText(this, "User not logged in", Toast.LENGTH_SHORT).show();
             finish();
@@ -60,8 +61,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         }
         isCurrentUser = selectedUid.equals(currentUser.getId());
         if (!isCurrentUser && !currentUser.isAdmin()) {
-            // If the user is not an admin and the selected user is not the current user
-            // then finish the activity
+            /// If the user is not an admin and the selected user is not the current user then finish the activity
             Toast.makeText(this, "You are not authorized to view this profile", Toast.LENGTH_SHORT).show();
             finish();
             return;
@@ -75,7 +75,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         set_tv(tv_username, tv_nick_name, tv_level, tv_money);
 
         btn_to_admin_page = findViewById(R.id.btn_player_profile_to_admin_page);
-        if (currentUser.isAdmin) {
+        if (currentUser.isAdmin()) {
             btn_to_admin_page.setVisibility(View.VISIBLE);
         } else {
             btn_to_admin_page.setVisibility(View.GONE);
@@ -84,11 +84,12 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
         Log.d(TAG, "Selected user: " + selectedUid);
 
-        // Initialize the EditText fields
+        /// Initialize the EditText fields
         etUserFirstName = findViewById(R.id.et_user_first_name);
         etUserNickName = findViewById(R.id.et_user_nick_name);
         etUserEmail = findViewById(R.id.et_user_email);
         etUserPassword = findViewById(R.id.et_user_password);
+
         tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
 
         btnUpdateProfile = findViewById(R.id.btn_edit_profile);
@@ -182,17 +183,32 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         }));
     }
 
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
     private void set_tv(TextView tvUsername, TextView tvNickname, TextView tvLevel, TextView tvMoney) {
-        // Get the user data from database
+        /// Get the user data from database
         databaseService.getUser(selectedUid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
                 selectedUser = user;
-                // Set the user data to the EditText fields
                 tvUsername.setText(user.getUsername());
                 tvNickname.setText(user.getNickname());
-                tvLevel.setText(String.valueOf(user.getExp()));
-                tvMoney.setText(String.valueOf(user.getMoney()));
+                tvLevel.setText(String.valueOf(user.getExp())+"xp");
+                tvMoney.setText(String.valueOf(user.getMoney())+"c");
             }
 
             @Override
@@ -211,18 +227,18 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
     }
 
     private void showUserProfile() {
-        // Get the user data from database
+        /// Get the user data from database
         databaseService.getUser(selectedUid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
                 selectedUser = user;
-                // Set the user data to the EditText fields
+                /// Set the user data to the EditText fields
                 etUserFirstName.setText(user.getUsername());
                 etUserNickName.setText(user.getNickname());
                 etUserEmail.setText(user.getEmail());
                 etUserPassword.setText(user.getPassword());
 
-                // Update display fields
+                /// Update display fields
                 String displayName = user.getUsername() + "|" + user.getNickname();
                 tvUserDisplayEmail.setText(user.getEmail());
             }
@@ -233,7 +249,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             }
         });
 
-        // disable the EditText fields if the user is not the current user
+        /// disable the EditText fields if the user is not the current user
         if (!isCurrentUser) {
             etUserEmail.setEnabled(false);
             etUserPassword.setEnabled(false);
@@ -250,7 +266,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show();
             return;
         }
-        // Get the updated user data from the EditText fields
+        /// Get the updated user data from the EditText fields
         String firstName = etUserFirstName.getText().toString();
         String lastName = etUserNickName.getText().toString();
         String email = etUserEmail.getText().toString();
@@ -260,13 +276,13 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             Log.e(TAG, "Invalid input");
             return;
         }
-        // Update the user object
+        /// Update the user object
         selectedUser.setUsername(firstName);
         selectedUser.setNickname(lastName);
         selectedUser.setEmail(email);
         selectedUser.setPassword(password);
 
-        // Update the user data in the authentication
+        /// Update the user data in the authentication
         Log.d(TAG, "Updating user profile");
         Log.d(TAG, "Selected user UID: " + selectedUser.getId());
         Log.d(TAG, "Is current user: " + isCurrentUser);
@@ -274,14 +290,14 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         Log.d(TAG, "User password: " + selectedUser.getPassword());
 
 
-        if (!isCurrentUser && !selectedUser.isAdmin()) {
+        if (!isCurrentUser && !currentUser.isAdmin()) {
             Log.e(TAG, "Only the current user can update their profile");
             Toast.makeText(this, "You can only update your own profile", Toast.LENGTH_SHORT).show();
             return;
         } else if (isCurrentUser) {
             updateUserInDatabase(selectedUser);
-        } else if (selectedUser.isAdmin()) {
-            // update the user in the database
+        } else if (currentUser.isAdmin()) {
+            /// update the user in the database
             updateUserInDatabase(selectedUser);
         }
     }

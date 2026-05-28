@@ -13,6 +13,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         });
         databaseService = new DatabaseService();
 
+        full_screen();
         setPlayerInfo();
 
         btn_logout = findViewById(R.id.btn_main_logout);
@@ -95,7 +97,8 @@ public class MainActivity extends AppCompatActivity {
                         public void onCompleted(Map<String, Group> groupMap) {
                             Group group = currentUser.getMyGroup(groupMap);
                             if (group == null) {
-                                Toast.makeText(MainActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
+                                startActivity(intent);
                                 return;
                             }
                             Intent intent = new Intent(MainActivity.this, MyGroupActivity.class);
@@ -152,6 +155,22 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
+    }
+
     private void setPlayerInfo() {
         tv_nick_name = findViewById(R.id.tv_main_nick_name);
         tv_level = findViewById(R.id.tv_main_level);
@@ -172,8 +191,12 @@ public class MainActivity extends AppCompatActivity {
                     if (user.getNickname() != null) {
                         tv_nick_name.setText(user.getNickname());
                     }
+
                     currentLevel = User.levelCalculate(user.getExp());
                     tv_level.setText(String.valueOf("Lv. " + currentLevel));
+
+                    int exp_for_next_level = (int) Math.pow((currentLevel+1) / 0.2, 2);
+                    pbar_level.setMax(exp_for_next_level - user.getExp());
 
                     int remainingExp = User.getRemainingExp(user.getExp());
                     pbar_level.setProgress(remainingExp);
@@ -193,7 +216,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void updateGameAccess() {
 
-        // Snake
         if (currentLevel < SNAKE_LEVEL) {
             play_snake_btn.setEnabled(false);
             play_snake_btn.setText("🔒Snake " + SNAKE_LEVEL);
@@ -204,7 +226,6 @@ public class MainActivity extends AppCompatActivity {
             play_snake_btn.setAlpha(1f);
         }
 
-        // Piano
         if (currentLevel < PIANO_LEVEL) {
             play_piano_btn.setEnabled(false);
             play_piano_btn.setText("🔒Piano " + PIANO_LEVEL);

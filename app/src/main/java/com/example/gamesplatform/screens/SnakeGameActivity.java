@@ -11,6 +11,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
@@ -44,6 +45,7 @@ public class SnakeGameActivity extends AppCompatActivity implements SnakeGameVie
         });
 
         initUI();
+        full_screen();
         databaseService = DatabaseService.getInstance();
         loadUser();
 
@@ -53,6 +55,22 @@ public class SnakeGameActivity extends AppCompatActivity implements SnakeGameVie
         });
 
         setupControls();
+    }
+
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
     private void initUI() {
@@ -114,7 +132,7 @@ public class SnakeGameActivity extends AppCompatActivity implements SnakeGameVie
                 if (user == null) return null;
                 user.setSnakeRecord(finalRecord);
                 user.setMoney(user.getMoney() + score);
-                user.setExp(user.getExp() + score);
+                user.setExp(user.getExp() + score*2);
                 return user;
             }, null);
         }

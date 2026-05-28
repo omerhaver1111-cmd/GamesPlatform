@@ -12,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.example.gamesplatform.R;
@@ -36,14 +37,15 @@ public class CarEscapeActivity extends AppCompatActivity implements CarEscapeGam
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_car_escape);
-
-        // הגדרת Insets
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        setContentView(R.layout.activity_car_escape);
+
+        full_screen();
         initUI();
         databaseService = DatabaseService.getInstance();
         loadUser();
@@ -51,10 +53,25 @@ public class CarEscapeActivity extends AppCompatActivity implements CarEscapeGam
         game_container.post(() -> {
             int width = game_container.getWidth();
             int height = game_container.getHeight();
-            // יצירת ה-View החדש מהקובץ הנפרד
             CarEscapeGameView gameView = new CarEscapeGameView(this, width, height, timer_text_view, this);
             game_container.addView(gameView);
         });
+    }
+
+    private void full_screen() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.R) {
+            androidx.core.view.WindowInsetsControllerCompat controller =
+                    WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView());
+
+            // הסתרת סרגלי המערכת
+            controller.hide(WindowInsetsCompat.Type.systemBars());
+            // הגדרה שהסרגלים יופיעו רק במשיכה קלה מהקצה וייעלמו שוב
+            controller.setSystemBarsBehavior(androidx.core.view.WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        } else {
+            // תמיכה בגרסאות אנדרואיד ישנות
+            getWindow().setFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                    android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        }
     }
 
     private void initUI() {
@@ -85,7 +102,7 @@ public class CarEscapeActivity extends AppCompatActivity implements CarEscapeGam
         });
     }
 
-    // מימוש הפונקציות של ה-Callback
+
     @Override
     public void onGameOver(int time, int coins) {
         runOnUiThread(() -> showGameOverUI(time, coins));
@@ -122,9 +139,9 @@ public class CarEscapeActivity extends AppCompatActivity implements CarEscapeGam
         databaseService.updateUser(currentUser.getId(), user -> {
             if (user == null) return null;
             user.setMoney(user.getMoney() + coins);
-            user.setExp(user.getExp() + (time - time % 10));
+            user.setExp(user.getExp() + (time /3 )+ coins);
             user.setCarGameRecord(finalRecord);
-            currentUser = user; // עדכון אובייקט מקומי
+            currentUser = user; /// עדכון המשתמש מקומי
             return user;
         }, null);
     }
