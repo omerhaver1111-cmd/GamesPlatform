@@ -7,6 +7,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -32,6 +35,8 @@ import java.util.Map;
 public class LeaderBordActivity extends AppCompatActivity {
     RecyclerView carRecycler, snakeRecycler, pianoRecycler;
     UsersLeaderBordAdapter carAdapter, snakeAdapter, pianoAdapter;
+    Button btnCar, btnSnake, btnPiano;
+    TextView tvBoardTitle;
     private GestureDetector gestureDetector;
     private DatabaseService databaseService;
 
@@ -64,6 +69,38 @@ public class LeaderBordActivity extends AppCompatActivity {
         carRecycler.setAdapter(carAdapter);
         snakeRecycler.setAdapter(snakeAdapter);
         pianoRecycler.setAdapter(pianoAdapter);
+
+        tvBoardTitle = findViewById(R.id.tv_leader_bord_title);
+        btnCar = findViewById(R.id.btn_leader_bord_car_escape);
+        btnCar.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvBoardTitle.setText("Car Escape");
+                carRecycler.setVisibility(View.VISIBLE);
+                snakeRecycler.setVisibility(View.GONE);
+                pianoRecycler.setVisibility(View.GONE);
+            }
+        });
+        btnSnake = findViewById(R.id.btn_leader_bord_snake);
+        btnSnake.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvBoardTitle.setText("Snake");
+                carRecycler.setVisibility(View.GONE);
+                snakeRecycler.setVisibility(View.VISIBLE);
+                pianoRecycler.setVisibility(View.GONE);
+            }
+        });
+        btnPiano = findViewById(R.id.btn_leader_bord_piano);
+        btnPiano.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tvBoardTitle.setText("Piano");
+                carRecycler.setVisibility(View.GONE);
+                snakeRecycler.setVisibility(View.GONE);
+                pianoRecycler.setVisibility(View.VISIBLE);
+            }
+        });
 
         loadLeaderboards();
 
@@ -146,6 +183,7 @@ public class LeaderBordActivity extends AppCompatActivity {
                     android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
         }
     }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

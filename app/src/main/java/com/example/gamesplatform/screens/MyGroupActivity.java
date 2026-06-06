@@ -2,6 +2,7 @@ package com.example.gamesplatform.screens;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -46,6 +47,7 @@ public class MyGroupActivity extends AppCompatActivity {
     private DatabaseService databaseService;
 
     private TextView btn_to_player_info, btn_to_main, btn_to_group;
+    private TextView tv_mygroup_loading;
 
     private ImageView imgBanner;
     private Button btnLeaveGroup, btnUploadBanner;
@@ -89,11 +91,12 @@ public class MyGroupActivity extends AppCompatActivity {
         setupRecyclerView();
         loadGroupMembers();
 
+
         if (currentUser.isAdmin()) {
             btnUploadBanner.setVisibility(android.view.View.VISIBLE);
         } else if (currentUser.isInGroup()) {
             btnLeaveGroup.setVisibility(android.view.View.VISIBLE);
-            btnUploadBanner.setVisibility(View.GONE);
+            btnUploadBanner.setVisibility(View.VISIBLE);
         } else {
             btnLeaveGroup.setVisibility(android.view.View.GONE);
             btnUploadBanner.setVisibility(android.view.View.GONE);
@@ -265,49 +268,82 @@ public class MyGroupActivity extends AppCompatActivity {
     }
 
     private void pickImageFromGallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, 100);
+//        Intent intent = new Intent(Intent.ACTION_PICK);
+//        intent.setType("image/*");
+//        startActivityForResult(intent, 100);
+
+        // 1. Intent לגלריה
+        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        galleryIntent.setType("image/*");
+
+        // 2. Intent למצלמה
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // 3. יצירת תפריט בחירה משולב של מערכת ההפעלה
+        Intent chooserIntent = Intent.createChooser(galleryIntent, "בחר מקור לתמונה");
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { cameraIntent });
+
+        // הפעלה עם קוד בקשה 100
+        startActivityForResult(chooserIntent, 100);
+
     }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == 100 && resultCode == RESULT_OK && data != null) {
-
             try {
-                android.net.Uri uri = data.getData();
-                ImageView tempImage = new ImageView(this);
-                tempImage.setImageURI(uri);
+                String base64 = null;
 
-                final String base64 = ImageUtil.toBase64(tempImage);
+                /// תמונה מהגלריה
+                if (data.getData() != null) {
+                    android.net.Uri uri = data.getData();
+                    ImageView tempImage = new ImageView(this);
+                    tempImage.setImageURI(uri);
+                    base64 = ImageUtil.toBase64(tempImage);
+                }
+                /// תמונה מהמצלמה
+                else if (data.getExtras() != null && data.getExtras().get("data") != null) {
+                    android.graphics.Bitmap photo = (android.graphics.Bitmap) data.getExtras().get("data");
+                    ImageView tempImage = new ImageView(this);
+                    tempImage.setImageBitmap(photo);
+                    base64 = ImageUtil.toBase64(tempImage);
+                }
 
-                databaseService.updateGroup(currentGroupId, group -> {
-                    if (group == null) return null;
+                ///  שמירת התמונה
+                if (base64 != null) {
+                    final String finalBase64 = base64;
+                    databaseService.updateGroup(currentGroupId, group -> {
+                        if (group == null) return null;
+                        group.setBannerImageBase64(finalBase64);
+                        return group;
+                    }, new DatabaseService.DatabaseCallback<Group>() {
+                        @Override
+                        public void onCompleted(Group object) {
+                            Toast.makeText(MyGroupActivity.this, "Banner updated", Toast.LENGTH_SHORT).show();
+                            loadGroupBanner(object);
+                        }
 
-                    group.setBannerImageBase64(base64);
-                    return group;
-
-                }, new DatabaseService.DatabaseCallback<Group>() {
-
-                    @Override
-                    public void onCompleted(Group object) {
-                        Toast.makeText(MyGroupActivity.this, "Banner updated", Toast.LENGTH_SHORT).show();
-                        loadGroupBanner(object);
-                    }
-
-                    @Override
-                    public void onFailed(Exception e) {
-                        Toast.makeText(MyGroupActivity.this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                        @Override
+                        public void onFailed(Exception e) {
+                            Toast.makeText(MyGroupActivity.this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                } else {
+                    Toast.makeText(this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
+                }
 
             } catch (Exception e) {
                 e.printStackTrace();
+                Toast.makeText(this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
             }
+        } else if (resultCode != RESULT_CANCELED) {
+            Toast.makeText(this, "Failed to upload banner", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     private void loadGroupBanner(Group group) {
         if (group != null) {
@@ -324,6 +360,8 @@ public class MyGroupActivity extends AppCompatActivity {
         rvGMembers = findViewById(R.id.rv_my_group_users);
         tvUserCount = findViewById(R.id.tv_user_count_my_group);
         tvGroupName = findViewById(R.id.tv_group_name_my_group);
+        tv_mygroup_loading = findViewById(R.id.tv_mygroup_loading);
+        tv_mygroup_loading.setVisibility(View.VISIBLE);
 
         imgBanner = findViewById(R.id.img_group_banner);
         btnLeaveGroup = findViewById(R.id.btn_leave_group);
@@ -386,17 +424,17 @@ public class MyGroupActivity extends AppCompatActivity {
                         }
                     });
                 }
+
+                tv_mygroup_loading.setVisibility(View.GONE);
+
             }
 
             @Override
             public void onFailed(Exception e) {
                 Toast.makeText(MyGroupActivity.this, "Error loading group details.", Toast.LENGTH_SHORT).show();
                 Log.e(TAG, "Failed to get group", e);
+                tv_mygroup_loading.setVisibility(View.GONE);
             }
         });
-
-
     }
-
-
 }

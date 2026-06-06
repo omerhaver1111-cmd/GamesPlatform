@@ -100,7 +100,21 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/tv_mygroup_loading"
+        android:layout_width="460dp"
+        android:layout_height="794dp"
+        android:background="#2B425B"
+        android:gravity="center"
+        android:text="loading..."
+        android:textColor="@color/white"
+        android:textSize="20dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <LinearLayout
+        android:id="@+id/linearLayout7"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"

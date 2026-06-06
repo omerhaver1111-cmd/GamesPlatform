@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private final int SNAKE_LEVEL = 3;
     private final int PIANO_LEVEL = 5;
     Button btn_logout, play_car_btn, play_snake_btn, play_piano_btn;
-    TextView btn_to_player_info, btn_to_main, btn_to_group, btn_to_shop;
+    TextView btn_to_player_info, btn_to_group;
     TextView tv_level, tv_nick_name, tv_coins;
     ProgressBar pbar_level;
     private DatabaseService databaseService;
@@ -64,14 +64,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        btn_to_main = findViewById((R.id.btn_main_home));
-        btn_to_main.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MainActivity.class);
-                startActivity(intent);
-            }
-        });
+
 
         btn_to_player_info = findViewById(R.id.btn_main_info);
         btn_to_player_info.setOnClickListener(new View.OnClickListener() {
@@ -192,14 +185,16 @@ public class MainActivity extends AppCompatActivity {
                         tv_nick_name.setText(user.getNickname());
                     }
 
+                    currentLevel = user.levelCalculate(user.getExp());
+                    int xpAtCurrentLevelStart = (int) Math.pow(currentLevel / 0.2, 2);
+                    int xpAtNextLevelStart = (int) Math.pow((currentLevel + 1) / 0.2, 2);
+                    pbar_level.setMax(xpAtNextLevelStart - xpAtCurrentLevelStart);
+                    pbar_level.setProgress(user.getExp() - xpAtCurrentLevelStart);
+
+
                     currentLevel = User.levelCalculate(user.getExp());
                     tv_level.setText(String.valueOf("Lv. " + currentLevel));
 
-                    int exp_for_next_level = (int) Math.pow((currentLevel+1) / 0.2, 2);
-                    pbar_level.setMax(exp_for_next_level - user.getExp());
-
-                    int remainingExp = User.getRemainingExp(user.getExp());
-                    pbar_level.setProgress(remainingExp);
 
                     tv_coins.setText(user.getMoney() + "c");
 
