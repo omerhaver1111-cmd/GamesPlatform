@@ -1,5 +1,6 @@
 package com.example.gamesplatform.screens;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -34,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Predicate;
 
 public class MyGroupActivity extends AppCompatActivity {
 
@@ -89,7 +91,7 @@ public class MyGroupActivity extends AppCompatActivity {
         full_screen();
         setupButtons();
         setupRecyclerView();
-        loadGroupMembers();
+        loadGroup();
 
 
         if (currentUser.isAdmin()) {
@@ -146,17 +148,23 @@ public class MyGroupActivity extends AppCompatActivity {
         });
 
         btn_to_group = findViewById(R.id.btn_group);
-        btn_to_group.setOnClickListener(v -> {
-            User currentUser = SharedPreferencesUtil.getUser(MyGroupActivity.this);
-            if (currentUser == null) return;
+        btn_to_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                User currentUser = SharedPreferencesUtil.getUser(MyGroupActivity.this);
+                if (!currentUser.isInGroup()) {
+                    Intent intent = new Intent(MyGroupActivity.this, GroupsActivity.class);
+                    startActivity(intent);
+                    return;
+                }
 
-            if (currentUser.isInGroup()) {
-                databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
+                databaseService.getGroupList(new DatabaseService.DatabaseCallback<List<Group>>() {
                     @Override
-                    public void onCompleted(Map<String, Group> groupMap) {
-                        Group group = currentUser.getMyGroup(groupMap);
+                    public void onCompleted(List<Group> groups) {
+                        Group group = currentUser.getMyGroup(groups);
                         if (group == null) {
-                            Toast.makeText(MyGroupActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(MyGroupActivity.this, GroupsActivity.class);
+                            startActivity(intent);
                             return;
                         }
                         Intent intent = new Intent(MyGroupActivity.this, MyGroupActivity.class);
@@ -170,8 +178,6 @@ public class MyGroupActivity extends AppCompatActivity {
                         Log.e(TAG, "getGroupMap failed", e);
                     }
                 });
-            } else {
-                startActivity(new Intent(MyGroupActivity.this, GroupsActivity.class));
             }
         });
     }
@@ -205,9 +211,9 @@ public class MyGroupActivity extends AppCompatActivity {
                 if (user == null) return null;
                 user.setInGroup(false);
                 return user;
-            }, new DatabaseService.DatabaseCallback<Void>() {
+            }, new DatabaseService.DatabaseCallback<User>() {
                 @Override
-                public void onCompleted(Void unused) {
+                public void onCompleted(User serverUser) {
                     Toast.makeText(MyGroupActivity.this, "Left group", Toast.LENGTH_SHORT).show();
 
                     startActivity(new Intent(MyGroupActivity.this, GroupsActivity.class));
@@ -245,49 +251,27 @@ public class MyGroupActivity extends AppCompatActivity {
 
         /// העלאת באנר (רק ליוצר הקבוצה)
         btnUploadBanner.setOnClickListener(v -> {
-            if (currentUser == null) return;
-
-            databaseService.getGroup(currentGroupId, new DatabaseService.DatabaseCallback<Group>() {
-                @Override
-                public void onCompleted(Group group) {
-                    if (group == null) return;
-
-                    if (!group.isAdmin(currentUser.getId())) {
-                        Toast.makeText(MyGroupActivity.this, "Only admin can upload banner", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-
-                    pickImageFromGallery();
-                }
-
-                @Override
-                public void onFailed(Exception e) {
-                }
-            });
+            pickImageFromGallery();
         });
     }
 
     private void pickImageFromGallery() {
-//        Intent intent = new Intent(Intent.ACTION_PICK);
-//        intent.setType("image/*");
-//        startActivityForResult(intent, 100);
 
-        // 1. Intent לגלריה
+        /// Intent לגלריה
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         galleryIntent.setType("image/*");
 
-        // 2. Intent למצלמה
+        /// Intent למצלמה
         Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-        // 3. יצירת תפריט בחירה משולב של מערכת ההפעלה
+        /// יצירת תפריט בחירה משולב של מערכת ההפעל
         Intent chooserIntent = Intent.createChooser(galleryIntent, "בחר מקור לתמונה");
-        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[] { cameraIntent });
+        chooserIntent.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cameraIntent});
 
-        // הפעלה עם קוד בקשה 100
+        /// הפעלה עם קוד בקשה
         startActivityForResult(chooserIntent, 100);
 
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -372,19 +356,19 @@ public class MyGroupActivity extends AppCompatActivity {
         rvGMembers.setLayoutManager(new LinearLayoutManager(this));
         usersAdapter = new UsersAdapter(new UsersAdapter.OnUserClickListener() {
             @Override
-            public void onUserClick(User user) {
+            public void onUserClick(User user, int position) {
                 Log.d(TAG, "User clicked: " + user.getUsername());
             }
 
             @Override
-            public void onLongUserClick(User user) {
+            public void onLongUserClick(User user, int position) {
                 Log.d(TAG, "User clicked: " + user.getUsername());
             }
         });
         rvGMembers.setAdapter(usersAdapter);
     }
 
-    private void loadGroupMembers() {
+    private void loadGroup() {
         databaseService.getGroup(currentGroupId, new DatabaseService.DatabaseCallback<Group>() {
             @Override
             public void onCompleted(Group group) {
@@ -398,34 +382,37 @@ public class MyGroupActivity extends AppCompatActivity {
                 usersAdapter.setGroupName(group.getGroupName());
                 loadGroupBanner(group);
 
-                Set<String> memberIds = group.getUserIds();
-                List<User> membersList = new ArrayList<>();
-                AtomicInteger usersToLoad = new AtomicInteger(memberIds.size());
+                databaseService.getUserList(new DatabaseService.DatabaseCallback<>() {
+                    @Override
+                    public void onCompleted(List<User> users) {
+                        users.removeIf(user -> !group.isMember(user.getId()));
+                        usersAdapter.setUsers(users);
+                        tvUserCount.setText("Members: " + users.size());
+                    }
 
-                for (String userId : memberIds) {
-                    databaseService.getUser(userId, new DatabaseService.DatabaseCallback<User>() {
-                        @Override
-                        public void onCompleted(User user) {
-                            if (user != null) {
-                                membersList.add(user);
-                            }
-                            if (usersToLoad.decrementAndGet() == 0) {
-                                usersAdapter.setUsers(membersList);
-                                tvUserCount.setText("Members: " + membersList.size());
-                            }
-                        }
+                    @SuppressLint("SetTextI18n")
+                    @Override
+                    public void onFailed(Exception e) {
+                        usersAdapter.setUsers(new ArrayList<>());
+                        tvUserCount.setText("Members: 0");
+                    }
+                });
 
-                        @Override
-                        public void onFailed(Exception e) {
-                            if (usersToLoad.decrementAndGet() == 0) {
-                                usersAdapter.setUsers(membersList);
-                                tvUserCount.setText("Members: " + membersList.size());
-                            }
-                        }
-                    });
-                }
 
                 tv_mygroup_loading.setVisibility(View.GONE);
+
+                if (group.getLeaderId().equals(currentUser.getId()) || currentUser.isAdmin()) {
+                    btnUploadBanner.setVisibility(View.VISIBLE);
+                } else {
+                    btnUploadBanner.setVisibility(View.GONE);
+                }
+
+                if (group.isMember(currentUser.getId())) {
+                    btnLeaveGroup.setVisibility(View.VISIBLE);
+                }
+                else {
+                    btnLeaveGroup.setVisibility(View.GONE);
+                }
 
             }
 

@@ -24,6 +24,7 @@ import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 import com.example.gamesplatform.utils.Validator;
 
+import java.util.List;
 import java.util.Map;
 import java.util.function.UnaryOperator;
 
@@ -67,24 +68,14 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             return;
         }
 
-
-        tv_username = findViewById(R.id.tv_user_display_username);
-        tv_nick_name = findViewById(R.id.tv_user_display_nikname);
-        tv_level = findViewById(R.id.tv_user_display_level);
-        tv_money = findViewById(R.id.tv_user_display_cash);
-        set_tv(tv_username, tv_nick_name, tv_level, tv_money);
-
-        btn_to_admin_page = findViewById(R.id.btn_player_profile_to_admin_page);
-        if (currentUser.isAdmin()) {
-            btn_to_admin_page.setVisibility(View.VISIBLE);
-        } else {
-            btn_to_admin_page.setVisibility(View.GONE);
-        }
-
-
         Log.d(TAG, "Selected user: " + selectedUid);
 
-        /// Initialize the EditText fields
+        setViews();
+        fetchUser();
+    }
+
+
+    private void setViews() {
         etUserFirstName = findViewById(R.id.et_user_first_name);
         etUserNickName = findViewById(R.id.et_user_nick_name);
         etUserEmail = findViewById(R.id.et_user_email);
@@ -92,10 +83,14 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
 
         tvUserDisplayEmail = findViewById(R.id.tv_user_display_email);
 
+        tv_username = findViewById(R.id.tv_user_display_username);
+        tv_nick_name = findViewById(R.id.tv_user_display_nikname);
+        tv_level = findViewById(R.id.tv_user_display_level);
+        tv_money = findViewById(R.id.tv_user_display_cash);
+
         btnUpdateProfile = findViewById(R.id.btn_edit_profile);
         btnUpdateProfile.setOnClickListener(this);
 
-        showUserProfile();
         btn_to_main = findViewById((R.id.btn_main_home));
         btn_to_main.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,68 +114,64 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
             @Override
             public void onClick(View v) {
                 User currentUser = SharedPreferencesUtil.getUser(PlayerInfoActivity.this);
-                if (currentUser == null) {
-                    Log.e(TAG, "No logged in user");
-                    return;
-                }
-                if (currentUser.isInGroup()) {
-                    databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
-                        @Override
-                        public void onCompleted(Map<String, Group> groupMap) {
-                            Group group = currentUser.getMyGroup(groupMap);
-                            if (group == null) {
-                                Toast.makeText(PlayerInfoActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            Intent intent = new Intent(PlayerInfoActivity.this, MyGroupActivity.class);
-                            intent.putExtra("GROUP_ID", group.getGroupId());
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onFailed(Exception e) {
-                            Toast.makeText(PlayerInfoActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, "getGroupMap failed", e);
-                        }
-                    });
-                } else {
+                if (!currentUser.isInGroup()) {
                     Intent intent = new Intent(PlayerInfoActivity.this, GroupsActivity.class);
                     startActivity(intent);
+                    return;
                 }
+
+                databaseService.getGroupList(new DatabaseService.DatabaseCallback<List<Group>>() {
+                    @Override
+                    public void onCompleted(List<Group> groups) {
+                        Group group = currentUser.getMyGroup(groups);
+                        if (group == null) {
+                            Intent intent = new Intent(PlayerInfoActivity.this, GroupsActivity.class);
+                            startActivity(intent);
+                            return;
+                        }
+                        Intent intent = new Intent(PlayerInfoActivity.this, MyGroupActivity.class);
+                        intent.putExtra("GROUP_ID", group.getGroupId());
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(PlayerInfoActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "getGroupMap failed", e);
+                    }
+                });
             }
         });
 
-        btn_logout = findViewById(R.id.btn_player_profile_logout);
-        btn_logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new AlertDialog.Builder(PlayerInfoActivity.this)
-                        .setTitle("Logout")
-                        .setMessage("Are you sure you want to log out?")
-                        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                                SharedPreferencesUtil.signOutUser(PlayerInfoActivity.this);
-
-                                Intent intent = new Intent(PlayerInfoActivity.this, LandingActivity.class);
-                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                                startActivity(intent);
-                            }
-                        })
-                        .setNegativeButton("Cancel", null)
-                        .show();
-
-            }
-        });
-
-        btn_to_admin_page.setOnClickListener((new View.OnClickListener() {
+        btn_to_admin_page = findViewById(R.id.btn_player_profile_to_admin_page);
+        btn_to_admin_page.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(PlayerInfoActivity.this, AdminPageActivity.class);
                 startActivity(intent);
             }
-        }));
+        });
+
+        btn_logout = findViewById(R.id.btn_player_profile_logout);
+        btn_logout.setOnClickListener(this);
+
+        if (isCurrentUser) {
+            /// disable the EditText fields if the user is not the current user
+            etUserEmail.setEnabled(true);
+            etUserPassword.setEnabled(true);
+            btnUpdateProfile.setVisibility(View.VISIBLE);
+            btn_logout.setVisibility(View.VISIBLE);
+        } else {
+            etUserEmail.setEnabled(false);
+            etUserPassword.setEnabled(false);
+            btn_logout.setVisibility(View.GONE);
+        }
+
+        if (currentUser.isAdmin()) {
+            btn_to_admin_page.setVisibility(View.VISIBLE);
+        } else {
+            btn_to_admin_page.setVisibility(View.GONE);
+        }
     }
 
     private void full_screen() {
@@ -199,25 +190,6 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    private void set_tv(TextView tvUsername, TextView tvNickname, TextView tvLevel, TextView tvMoney) {
-        /// Get the user data from database
-        databaseService.getUser(selectedUid, new DatabaseService.DatabaseCallback<User>() {
-            @Override
-            public void onCompleted(User user) {
-                selectedUser = user;
-                tvUsername.setText(user.getUsername());
-                tvNickname.setText(user.getNickname());
-                tvLevel.setText(String.valueOf(user.getExp())+"xp");
-                tvMoney.setText(String.valueOf(user.getMoney())+"c");
-            }
-
-            @Override
-            public void onFailed(Exception e) {
-                Log.e(TAG, "Error getting user profile", e);
-            }
-        });
-    }
-
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.btn_edit_profile) {
@@ -226,21 +198,13 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
         }
     }
 
-    private void showUserProfile() {
+    private void fetchUser() {
         /// Get the user data from database
         databaseService.getUser(selectedUid, new DatabaseService.DatabaseCallback<User>() {
             @Override
             public void onCompleted(User user) {
                 selectedUser = user;
-                /// Set the user data to the EditText fields
-                etUserFirstName.setText(user.getUsername());
-                etUserNickName.setText(user.getNickname());
-                etUserEmail.setText(user.getEmail());
-                etUserPassword.setText(user.getPassword());
-
-                /// Update display fields
-                String displayName = user.getUsername() + "|" + user.getNickname();
-                tvUserDisplayEmail.setText(user.getEmail());
+                updateView();
             }
 
             @Override
@@ -248,16 +212,19 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 Log.e(TAG, "Error getting user profile", e);
             }
         });
+    }
 
-        /// disable the EditText fields if the user is not the current user
-        if (!isCurrentUser) {
-            etUserEmail.setEnabled(false);
-            etUserPassword.setEnabled(false);
-        } else {
-            etUserEmail.setEnabled(true);
-            etUserPassword.setEnabled(true);
-            btnUpdateProfile.setVisibility(View.VISIBLE);
-        }
+    private void updateView() {
+        etUserFirstName.setText(selectedUser.getUsername());
+        etUserNickName.setText(selectedUser.getNickname());
+        etUserEmail.setText(selectedUser.getEmail());
+        etUserPassword.setText(selectedUser.getPassword());
+        tvUserDisplayEmail.setText(selectedUser.getEmail());
+
+        tv_username.setText(selectedUser.getUsername());
+        tv_nick_name.setText(selectedUser.getNickname());
+        tv_level.setText(selectedUser.getExp() +"xp");
+        tv_money.setText(selectedUser.getMoney() +"c");
     }
 
     private void updateUserProfile() {
@@ -315,12 +282,13 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 }
                 return serverUser;
             }
-        }, new DatabaseService.DatabaseCallback<Void>() {
+        }, new DatabaseService.DatabaseCallback<User>() {
             @Override
-            public void onCompleted(Void result) {
+            public void onCompleted(User serverUser) {
                 Log.d(TAG, "User profile updated successfully");
                 Toast.makeText(PlayerInfoActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
-                showUserProfile(); // Refresh the profile view
+                selectedUser = user;
+                updateView();
             }
 
             @Override
@@ -329,6 +297,7 @@ public class PlayerInfoActivity extends BaseActivity implements View.OnClickList
                 Toast.makeText(PlayerInfoActivity.this, "Failed to update profile", Toast.LENGTH_SHORT).show();
             }
         });
+
     }
 
     private boolean isValid(String firstName, String lastName, String email, String password) {

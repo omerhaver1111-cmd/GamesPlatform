@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import com.google.firebase.database.Exclude;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 
 public class User implements Serializable {
@@ -156,11 +157,11 @@ public class User implements Serializable {
         this.inGroup = ing;
     }
 
-    public Group getMyGroup(Map<String, Group> groupsMap) {
-        if (!inGroup || groupsMap == null || id == null) {
+    public Group getMyGroup(List<Group> groups) {
+        if (!inGroup || groups == null || id == null) {
             return null;
         }
-        for (Group group : groupsMap.values()) {
+        for (Group group : groups) {
             if (group.getUserIds() != null && group.getUserIds().contains(id)) {
                 return group;
             }

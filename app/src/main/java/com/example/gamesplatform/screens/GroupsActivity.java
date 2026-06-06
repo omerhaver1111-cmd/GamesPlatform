@@ -265,9 +265,9 @@ public class GroupsActivity extends BaseActivity implements View.OnClickListener
                 }
                 return serverUser;
             }
-        }, new DatabaseService.DatabaseCallback<Void>() {
+        }, new DatabaseService.DatabaseCallback<User>() {
             @Override
-            public void onCompleted(Void result) {
+            public void onCompleted(User serverUser) {
                 Log.d(TAG, "User profile updated successfully");
                 Toast.makeText(GroupsActivity.this, "Profile updated successfully", Toast.LENGTH_SHORT).show();
             }

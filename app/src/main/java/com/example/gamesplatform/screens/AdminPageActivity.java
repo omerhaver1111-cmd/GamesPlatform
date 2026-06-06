@@ -50,15 +50,15 @@ public class AdminPageActivity extends BaseActivity {
         usersList.setLayoutManager(new LinearLayoutManager(this));
         userAdapter = new UsersAdapter(new UsersAdapter.OnUserClickListener() {
             @Override
-            public void onUserClick(User user) {
+            public void onUserClick(User user, int position) {
                 Log.d(TAG, "User clicked: " + user);
                 Intent intent = new Intent(AdminPageActivity.this, PlayerInfoActivity.class);
                 intent.putExtra("USER_UID", user.getId());
                 startActivity(intent);
             }
             @Override
-            public void onLongUserClick(User user) {
-                showPromoteDialog(user);
+            public void onLongUserClick(User user, int position) {
+                showPromoteDialog(user, position);
             }
         });
         usersList.setAdapter(userAdapter);
@@ -91,10 +91,10 @@ public class AdminPageActivity extends BaseActivity {
                     return;
                 }
                 if (currentUser.isInGroup()) {
-                    databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
+                    databaseService.getGroupList(new DatabaseService.DatabaseCallback<List<Group>>() {
                         @Override
-                        public void onCompleted(Map<String, Group> groupMap) {
-                            Group group = currentUser.getMyGroup(groupMap);
+                        public void onCompleted(List<Group> groups) {
+                            Group group = currentUser.getMyGroup(groups);
                             if (group == null) {
                                 Toast.makeText(AdminPageActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
                                 return;
@@ -136,7 +136,7 @@ public class AdminPageActivity extends BaseActivity {
         }
     }
 
-    private void showPromoteDialog(User user) {
+    private void showPromoteDialog(User user, int position) {
 
         new AlertDialog.Builder(this)
                 .setTitle("Admin Promotion")
@@ -149,12 +149,13 @@ public class AdminPageActivity extends BaseActivity {
                         serverUser.setIsAdmin(true);
                         return serverUser;
 
-                    }, new DatabaseService.DatabaseCallback<Void>() {
+                    }, new DatabaseService.DatabaseCallback<User>() {
                         @Override
-                        public void onCompleted(Void unused) {
+                        public void onCompleted(User serverUser) {
                             Toast.makeText(AdminPageActivity.this,
                                     user.getUsername() + " is now admin",
                                     Toast.LENGTH_SHORT).show();
+                            userAdapter.setUserAtPosition(position, serverUser);
                         }
 
                         @Override
@@ -185,20 +186,6 @@ public class AdminPageActivity extends BaseActivity {
                 Log.e(TAG, "Failed to get users list", e);
             }
         });
-
-        databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
-            @Override
-            public void onCompleted(Map<String, Group> groupMap) {
-                userAdapter.setGroupsMap(groupMap);
-            }
-
-            @Override
-            public void onFailed(Exception e) {
-                Log.e(TAG, "Failed to load groups", e);
-            }
-        });
-
-
     }
 
 }

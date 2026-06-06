@@ -1,6 +1,7 @@
 package com.example.gamesplatform.screens;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -22,6 +23,7 @@ import com.example.gamesplatform.models.User;
 import com.example.gamesplatform.services.DatabaseService;
 import com.example.gamesplatform.utils.SharedPreferencesUtil;
 
+import java.util.List;
 import java.util.Map;
 
 
@@ -80,35 +82,32 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 User currentUser = SharedPreferencesUtil.getUser(MainActivity.this);
-                if (currentUser == null) {
-                    Log.e(TAG, "No logged in user");
-                    return;
-                }
-                if (currentUser.isInGroup()) {
-                    databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
-                        @Override
-                        public void onCompleted(Map<String, Group> groupMap) {
-                            Group group = currentUser.getMyGroup(groupMap);
-                            if (group == null) {
-                                Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
-                                startActivity(intent);
-                                return;
-                            }
-                            Intent intent = new Intent(MainActivity.this, MyGroupActivity.class);
-                            intent.putExtra("GROUP_ID", group.getGroupId());
-                            startActivity(intent);
-                        }
-
-                        @Override
-                        public void onFailed(Exception e) {
-                            Toast.makeText(MainActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
-                            Log.e(TAG, "getGroupMap failed", e);
-                        }
-                    });
-                } else {
+                if (!currentUser.isInGroup()) {
                     Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
                     startActivity(intent);
+                    return;
                 }
+
+                databaseService.getGroupList(new DatabaseService.DatabaseCallback<List<Group>>() {
+                    @Override
+                    public void onCompleted(List<Group> groups) {
+                        Group group = currentUser.getMyGroup(groups);
+                        if (group == null) {
+                            Intent intent = new Intent(MainActivity.this, GroupsActivity.class);
+                            startActivity(intent);
+                            return;
+                        }
+                        Intent intent = new Intent(MainActivity.this, MyGroupActivity.class);
+                        intent.putExtra("GROUP_ID", group.getGroupId());
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailed(Exception e) {
+                        Toast.makeText(MainActivity.this, "שגיאה בטעינת קבוצות", Toast.LENGTH_SHORT).show();
+                        Log.e(TAG, "getGroupMap failed", e);
+                    }
+                });
             }
         });
 
@@ -214,6 +213,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentLevel < SNAKE_LEVEL) {
             play_snake_btn.setEnabled(false);
             play_snake_btn.setText("🔒Snake " + SNAKE_LEVEL);
+            play_snake_btn.setTextColor(Color.WHITE);
             play_snake_btn.setAlpha(0.5f);
         } else {
             play_snake_btn.setEnabled(true);
@@ -224,6 +224,7 @@ public class MainActivity extends AppCompatActivity {
         if (currentLevel < PIANO_LEVEL) {
             play_piano_btn.setEnabled(false);
             play_piano_btn.setText("🔒Piano " + PIANO_LEVEL);
+            play_piano_btn.setTextColor(Color.WHITE);
             play_piano_btn.setAlpha(0.5f);
         } else {
             play_piano_btn.setEnabled(true);

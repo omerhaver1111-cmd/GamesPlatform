@@ -269,7 +269,7 @@
                                 app:layout_constraintStart_toStartOf="parent"
                                 app:layout_constraintTop_toTopOf="parent"
                                 app:layout_constraintVertical_bias="0.0"
-                                tools:visibility="gone" />
+                                tools:visibility="visible" />
 
                             <com.google.android.material.button.MaterialButton
                                 android:id="@+id/btn_edit_profile"

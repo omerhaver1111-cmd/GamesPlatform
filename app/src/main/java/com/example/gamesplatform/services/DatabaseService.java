@@ -310,7 +310,7 @@ public class DatabaseService {
     }
 
     public void getGroupMap(@NotNull final DatabaseCallback<Map<String, Group>> callback) {
-        getDataList(GROUP_PATH, Group.class, new DatabaseCallback<List<Group>>() {
+        getGroupList(new DatabaseCallback<List<Group>>() {
             @Override
             public void onCompleted(List<Group> groups) {
                 Map<String, Group> groupMap = new HashMap<>();
@@ -424,12 +424,12 @@ public class DatabaseService {
         });
     }
 
-    public void updateUser(@NotNull final String userId, UnaryOperator<User> function, @Nullable final DatabaseCallback<Void> callback) {
+    public void updateUser(@NotNull final String userId, UnaryOperator<User> function, @Nullable final DatabaseCallback<User> callback) {
         runTransaction(USERS_PATH + "/" + userId, User.class, function, new DatabaseCallback<User>() {
             @Override
             public void onCompleted(User object) {
                 if (callback != null) {
-                    callback.onCompleted(null);
+                    callback.onCompleted(object);
                 }
             }
 

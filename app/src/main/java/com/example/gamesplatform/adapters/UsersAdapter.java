@@ -20,7 +20,6 @@ import java.util.Map;
 public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHolder> {
 
     private List<User> users = new ArrayList<>();
-    private Map<String, Group> groupsMap = new HashMap<>();
     private OnUserClickListener listener;
     private String groupName;
 
@@ -31,12 +30,6 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
     /// פונקציה לעדכון המשתמשים
     public void setUsers(List<User> userList) {
         this.users = userList;
-        notifyDataSetChanged();
-    }
-
-    /// פונקציה לעדכון ה-Map של הקבוצות
-    public void setGroupsMap(Map<String, Group> groupsMap) {
-        this.groupsMap = groupsMap;
         notifyDataSetChanged();
     }
 
@@ -72,17 +65,18 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         /// הגדרת מאזין ללחיצה
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) {
-                listener.onUserClick(user);
+                listener.onUserClick(user, position);
             }
         });
 
         holder.itemView.setOnLongClickListener(v -> {
             if (listener != null) {
-                listener.onLongUserClick(user);
+                listener.onLongUserClick(user, position);
             }
             return false;
         });
     }
+
     public void setGroupName(String groupName) {
         this.groupName = groupName;
     }
@@ -93,14 +87,19 @@ public class UsersAdapter extends RecyclerView.Adapter<UsersAdapter.UserViewHold
         notifyDataSetChanged();
     }
 
+    public void setUserAtPosition(int position, User user) {
+        users.set(position, user);
+        notifyItemChanged(position);
+    }
+
     @Override
     public int getItemCount() {
         return users.size();
     }
 
     public interface OnUserClickListener {
-        void onUserClick(User user);
-        void onLongUserClick(User user);
+        void onUserClick(User user, int position);
+        void onLongUserClick(User user, int position);
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {

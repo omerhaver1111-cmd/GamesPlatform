@@ -129,12 +129,13 @@ public class LeaderBordActivity extends AppCompatActivity {
                                 Intent intent = new Intent(LeaderBordActivity.this, MainActivity.class);
                                 overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
                                 startActivity(intent);
+                                return false;
                             }
                             if (currentUser.isInGroup()) {
-                                databaseService.getGroupMap(new DatabaseService.DatabaseCallback<Map<String, Group>>() {
+                                databaseService.getGroupList(new DatabaseService.DatabaseCallback<List<Group>>() {
                                     @Override
-                                    public void onCompleted(Map<String, Group> groupMap) {
-                                        Group group = currentUser.getMyGroup(groupMap);
+                                    public void onCompleted(List<Group> groups) {
+                                        Group group = currentUser.getMyGroup(groups);
                                         if (group == null) {
                                             Toast.makeText(LeaderBordActivity.this, "לא נמצאה קבוצה", Toast.LENGTH_SHORT).show();
                                             return;

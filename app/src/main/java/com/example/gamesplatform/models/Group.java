@@ -57,23 +57,6 @@ public class Group implements Serializable {
         return this.members.keySet();
     }
 
-    public void promoteMember(String userId) {
-        if (members.containsKey(userId)) {
-            members.put(userId, true);
-        }
-    }
-
-    public void demoteMember(String userId) {
-        // חשוב לוודא שלא עושים demote ל-leader הראשי בטעות
-        if (members.containsKey(userId) && !userId.equals(leaderId)) {
-            members.put(userId, false);
-        }
-    }
-
-    public boolean isAdmin(String userId) {
-        return members != null && members.containsKey(userId) && Boolean.TRUE.equals(members.get(userId));
-    }
-
     @Exclude
     public int getMemberCount() {
         return members != null ? members.size() : 0;
